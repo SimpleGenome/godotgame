@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cr4yf0xpvn5an"]
+
+[node name="InventoryPanel" type="Control" unique_id=738416766]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=437854556]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=746171580]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer" unique_id=1634408904]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer" unique_id=1375253949]
+layout_mode = 2
+columns = 3

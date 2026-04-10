@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://cl14kc3u6lhdw"]
+
+[ext_resource type="Texture2D" uid="uid://bqkmmbvaujbxs" path="res://the-biggest-fantasy-map-on-the-internet-seriously-v0-siuyh7vvmnic1.webp" id="1_bkxqb"]
+[ext_resource type="Script" uid="uid://dcq85qt3g8ebe" path="res://src/WorldMapTexture.cs" id="1_i8jgj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nfwfx"]
+
+[node name="WorldMapTexture" type="PanelContainer" unique_id=1234935168 node_paths=PackedStringArray("_mapTexture")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = &"PanelContainerBorderless"
+theme_override_styles/panel = SubResource("StyleBoxFlat_nfwfx")
+script = ExtResource("1_i8jgj")
+_mapTexture = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=597572524]
+layout_mode = 2
+texture = ExtResource("1_bkxqb")
+expand_mode = 1
+
+[node name="Control" type="Control" parent="TextureRect" unique_id=1835635094]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2

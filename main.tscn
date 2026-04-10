@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://hcdnw1sjnnoi"]
+
+[ext_resource type="PackedScene" path="res://ui_canvas.tscn" id="1_ig7tw"]
+
+[node name="Node2D" type="Node2D" unique_id=204261305]
+
+[node name="UICanvas" parent="." unique_id=1943153530 instance=ExtResource("1_ig7tw")]

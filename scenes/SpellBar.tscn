@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://b751tflfvo3g4"]
+
+[ext_resource type="Script" uid="uid://ccdgw1w8aykil" path="res://src/SpellBar.cs" id="1_llna7"]
+[ext_resource type="PackedScene" uid="uid://dvc63cciivjsq" path="res://scenes/SpellBarButton.tscn" id="2_lknpm"]
+
+[node name="SpellBar" type="PanelContainer" unique_id=365594116 node_paths=PackedStringArray("_slots")]
+custom_minimum_size = Vector2(544, 58)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_llna7")
+_slots = NodePath("MarginContainer/Slots")
+_slotScene = ExtResource("2_lknpm")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1932131210]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="Slots" type="HBoxContainer" parent="MarginContainer" unique_id=852942220]
+layout_mode = 2

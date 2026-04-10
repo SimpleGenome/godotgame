@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://dxxcqux0elhxu"]
+
+[ext_resource type="Theme" uid="uid://cc1yjmdreteje" path="res://menu_theme.tres" id="2_b8rcd"]
+[ext_resource type="PackedScene" uid="uid://cl14kc3u6lhdw" path="res://scenes/world_map_texture.tscn" id="2_ig0vj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ethb"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+bg_color = Color(0.11, 0.07509333, 0.0352, 0.47058824)
+
+[node name="WorldMapPanel" type="Control" unique_id=1207472688]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=23477971]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="Panel" type="PanelContainer" parent="MarginContainer" unique_id=23340261]
+layout_mode = 2
+mouse_filter = 2
+theme = ExtResource("2_b8rcd")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/Panel" unique_id=1515964062]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="MapClipper" type="Control" parent="MarginContainer/Panel/MarginContainer" unique_id=339635369]
+clip_contents = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="WorldMapTexture" parent="MarginContainer/Panel/MarginContainer/MapClipper" unique_id=1700617646 node_paths=PackedStringArray("_mapClipper", "_zoomLabel") instance=ExtResource("2_ig0vj")]
+layout_mode = 1
+_mapClipper = NodePath("..")
+_zoomLabel = NodePath("../../Panel/HBoxContainer/ZoomLabel")
+
+[node name="Panel" type="PanelContainer" parent="MarginContainer/Panel/MarginContainer" unique_id=1181621776]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_5ethb")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/Panel/MarginContainer/Panel" unique_id=1353698151]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="ZoomLabel" type="Label" parent="MarginContainer/Panel/MarginContainer/Panel/HBoxContainer" unique_id=36672444]
+layout_mode = 2

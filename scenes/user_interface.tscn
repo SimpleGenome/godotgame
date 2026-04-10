@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://cfqikux7wma32"]
+
+[ext_resource type="PackedScene" uid="uid://danl615ixgdyo" path="res://scenes/adjustable_panel.tscn" id="1_m08fx"]
+[ext_resource type="Script" uid="uid://b0e1g2hjqms1" path="res://src/AdjustablePanelContainer.cs" id="1_ob1cj"]
+[ext_resource type="PackedScene" uid="uid://dxxcqux0elhxu" path="res://scenes/WorldMapPanel.tscn" id="3_5km2l"]
+[ext_resource type="PackedScene" uid="uid://b751tflfvo3g4" path="res://scenes/SpellBar.tscn" id="3_ug57t"]
+[ext_resource type="PackedScene" uid="uid://d3arjy1te5f4f" path="res://scenes/MenuBar.tscn" id="5_3xhqb"]
+[ext_resource type="PackedScene" uid="uid://b5qsyylxu5ihf" path="res://scenes/pause_menu.tscn" id="6_lmgon"]
+
+[node name="UserInterface" type="CanvasLayer" unique_id=1943153530]
+
+[node name="AdjustablePanelContainer" type="Control" parent="." unique_id=302552254 node_paths=PackedStringArray("_pausePanel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ob1cj")
+_pausePanel = NodePath("../PauseMenu")
+
+[node name="WorldMap" parent="AdjustablePanelContainer" unique_id=940319708 instance=ExtResource("1_m08fx")]
+layout_mode = 0
+_panelScene = ExtResource("3_5km2l")
+_menuId = "map"
+_defaultPos = Vector2(10, 10)
+_defaultSize = Vector2(500, 500)
+_minimumSize = Vector2(200, 200)
+_windowTitle = "World Map"
+
+[node name="Inventory" parent="AdjustablePanelContainer" unique_id=832327790 instance=ExtResource("1_m08fx")]
+layout_mode = 0
+_menuId = "inventory"
+_windowTitle = "Inventory"
+
+[node name="FixedPanelContainer" type="Control" parent="." unique_id=1029910027]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SpellBar" parent="FixedPanelContainer" unique_id=365594116 instance=ExtResource("3_ug57t")]
+layout_mode = 1
+offset_left = -272.0
+offset_top = -58.0
+offset_right = 272.0
+
+[node name="MenuBar" parent="FixedPanelContainer" unique_id=917596337 node_paths=PackedStringArray("_inventoryPanel", "_mapPanel") instance=ExtResource("5_3xhqb")]
+layout_mode = 1
+offset_right = 12.0
+offset_bottom = 12.0
+_inventoryPanel = NodePath("../../AdjustablePanelContainer/Inventory")
+_mapPanel = NodePath("../../AdjustablePanelContainer/WorldMap")
+
+[node name="PauseMenu" parent="." unique_id=2015271356 instance=ExtResource("6_lmgon")]
