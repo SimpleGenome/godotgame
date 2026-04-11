@@ -39,7 +39,6 @@ public partial class MenuBar : Control
 			new PanelShortcut("K", "skills", _skillsPanel),
 			new PanelShortcut("M", "map", _mapPanel),
 			new PanelShortcut("L", "questlog", _questLogPanel),
-			new PanelShortcut("P", "pause", _pausePanel),
 		};
 
 		foreach (var item in _hotkeyIds)

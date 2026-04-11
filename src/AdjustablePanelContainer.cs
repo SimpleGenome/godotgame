@@ -8,13 +8,18 @@ public partial class AdjustablePanelContainer : Control
 
 	public override void _Input(InputEvent @event)
 	{
+		HandleToggleMenuPressed(@event);
+		HandleBringPanelToFront(@event);
+	}
+
+	private void HandleBringPanelToFront(InputEvent @event)
+	{
 		if (@event is not InputEventMouseButton mb)
 			return;
 
 		if (mb.ButtonIndex != MouseButton.Left || !mb.Pressed)
 			return;
 
-		// Check topmost first: last child is usually frontmost.
 		for (int i = GetChildCount() - 1; i >= 0; i--)
 		{
 			Node child = GetChild(i);
@@ -28,40 +33,47 @@ public partial class AdjustablePanelContainer : Control
 				break;
 			}
 		}
+	}
 
+	private void HandleToggleMenuPressed(InputEvent @event)
+	{
 		if (!@event.IsActionPressed("toggle_menu"))
+		{
 			return;
-
-		Array<Node> panels = GetTree().GetNodesInGroup("adjustable_panels");
-
-		bool anyOpen = false;
-
-		foreach (Node node in panels)
-		{
-			if (node is AdjustablePanel panel && panel.IsOpen)
-			{
-				anyOpen = true;
-				break;
-			}
-		}
-
-		if (anyOpen)
-		{
-			GetTree().CallGroup("adjustable_panels", "ClosePanel");
 		}
 		else
 		{
-			if (_pausePanel.IsOpen)
+			Array<Node> panels = GetTree().GetNodesInGroup("adjustable_panels");
+
+			bool anyOpen = false;
+
+			foreach (Node node in panels)
 			{
-				_pausePanel.ClosePanel();
+				if (node is AdjustablePanel panel && panel.IsOpen)
+				{
+					anyOpen = true;
+					break;
+				}
+			}
+
+			if (anyOpen)
+			{
+				GetTree().CallGroup("adjustable_panels", "ClosePanel");
 			}
 			else
 			{
-				_pausePanel.OpenPanel();
+				if (_pausePanel.IsOpen)
+				{
+					_pausePanel.ClosePanel();
+				}
+				else
+				{
+					_pausePanel.OpenPanel();
+				}
 			}
-		}
 
-		GetViewport().SetInputAsHandled();
+			GetViewport().SetInputAsHandled();
+		}
 	}
 
 	public override void _UnhandledInput(InputEvent @event)

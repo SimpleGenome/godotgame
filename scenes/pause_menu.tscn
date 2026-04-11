@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dn53033f7prg8" path="res://src/PauseMenu.cs" id="1_n87rw"]
 
-[node name="PauseMenu" type="ColorRect" unique_id=821476394]
+[node name="PauseMenu" type="ColorRect" unique_id=821476394 node_paths=PackedStringArray("_resumeButton")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -10,6 +10,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.39215687)
 script = ExtResource("1_n87rw")
+_resumeButton = NodePath("CenterContainer/PanelContainer/VBoxContainer2/MarginContainer/VBoxContainer/ResumeButton")
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=1451752732]
 layout_mode = 1
@@ -49,19 +50,26 @@ layout_mode = 2
 [node name="ResumeButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer2/MarginContainer/VBoxContainer" unique_id=554960563]
 layout_mode = 2
 text = "Resume"
+alignment = 0
 
 [node name="MainMenuButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer2/MarginContainer/VBoxContainer" unique_id=347970237]
 layout_mode = 2
 text = "Main Menu"
+alignment = 0
 
 [node name="SaveButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer2/MarginContainer/VBoxContainer" unique_id=985271268]
 layout_mode = 2
-text = "Main Menu"
+text = "Save Game
+"
+alignment = 0
 
 [node name="LoadButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer2/MarginContainer/VBoxContainer" unique_id=225860172]
 layout_mode = 2
-text = "Main Menu"
+text = "Load Game
+"
+alignment = 0
 
 [node name="OptionsButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer2/MarginContainer/VBoxContainer" unique_id=1226077659]
 layout_mode = 2
 text = "Options"
+alignment = 0

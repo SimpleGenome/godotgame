@@ -1,12 +1,16 @@
 [gd_scene format=3 uid="uid://dwdijrnk173v5"]
 
+[ext_resource type="Script" uid="uid://bhpsgrly6dlc8" path="res://src/InventorySlot.cs" id="1_dxvxp"]
+
 [node name="InventorySlot" type="Control" unique_id=1620674794]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("1_dxvxp")
 
-[node name="Button" type="Button" parent="." unique_id=826679174]
+[node name="Panel" type="PanelContainer" parent="." unique_id=317085665]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +18,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Button" unique_id=1440582266]
+[node name="Button" type="Button" parent="Panel" unique_id=826679174]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/Button" unique_id=1440582266]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,16 +29,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TextureRect" type="TextureRect" parent="Button/MarginContainer" unique_id=480759899]
+[node name="TextureRect" type="TextureRect" parent="Panel/Button/MarginContainer" unique_id=480759899]
 layout_mode = 2
 expand_mode = 2
 stretch_mode = 3
 
-[node name="SlotIndexMargin" type="MarginContainer" parent="Button/MarginContainer" unique_id=1510992821]
+[node name="SlotIndexMargin" type="MarginContainer" parent="Panel/Button/MarginContainer" unique_id=1510992821]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 2
 
-[node name="InvSlotIndexLabel" type="Label" parent="Button/MarginContainer/SlotIndexMargin" unique_id=840268648]
+[node name="InvSlotIndexLabel" type="Label" parent="Panel/Button/MarginContainer/SlotIndexMargin" unique_id=840268648]
 layout_mode = 2

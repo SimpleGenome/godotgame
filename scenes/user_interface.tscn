@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://b0e1g2hjqms1" path="res://src/AdjustablePanelContainer.cs" id="1_ob1cj"]
 [ext_resource type="PackedScene" uid="uid://dxxcqux0elhxu" path="res://scenes/WorldMapPanel.tscn" id="3_5km2l"]
 [ext_resource type="PackedScene" uid="uid://b751tflfvo3g4" path="res://scenes/SpellBar.tscn" id="3_ug57t"]
+[ext_resource type="PackedScene" uid="uid://cr4yf0xpvn5an" path="res://scenes/inventory_panel.tscn" id="4_xsrv6"]
 [ext_resource type="PackedScene" uid="uid://d3arjy1te5f4f" path="res://scenes/MenuBar.tscn" id="5_3xhqb"]
 [ext_resource type="PackedScene" uid="uid://b5qsyylxu5ihf" path="res://scenes/pause_menu.tscn" id="6_lmgon"]
 
@@ -30,8 +31,25 @@ _windowTitle = "World Map"
 
 [node name="Inventory" parent="AdjustablePanelContainer" unique_id=832327790 instance=ExtResource("1_m08fx")]
 layout_mode = 0
+_panelScene = ExtResource("4_xsrv6")
 _menuId = "inventory"
+_minimumSize = Vector2(184, 150)
 _windowTitle = "Inventory"
+
+[node name="QuestLog" parent="AdjustablePanelContainer" unique_id=244212256 instance=ExtResource("1_m08fx")]
+layout_mode = 0
+_menuId = "questlog"
+_windowTitle = "Quest Log"
+
+[node name="Skills" parent="AdjustablePanelContainer" unique_id=1323266409 instance=ExtResource("1_m08fx")]
+layout_mode = 0
+_menuId = "skills"
+_windowTitle = "Skills"
+
+[node name="Character" parent="AdjustablePanelContainer" unique_id=1934544003 instance=ExtResource("1_m08fx")]
+layout_mode = 0
+_menuId = "character"
+_windowTitle = "Charactern"
 
 [node name="FixedPanelContainer" type="Control" parent="." unique_id=1029910027]
 layout_mode = 3
