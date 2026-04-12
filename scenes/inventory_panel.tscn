@@ -11,9 +11,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_v4pxl")
-_invSlots = NodePath("MarginContainer/InvSlotGrid/VBoxContainer/ScrollContainer/InvSlotGrid")
+_invSlots = NodePath("MarginContainer/VBoxContainer/ScrollContainer/InvSlotGrid")
 _invSlotScene = ExtResource("2_u4feb")
-_invScrollContainer = NodePath("MarginContainer/InvSlotGrid/VBoxContainer/ScrollContainer")
+_invScrollContainer = NodePath("MarginContainer/VBoxContainer/ScrollContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1392021396]
 layout_mode = 1
@@ -27,32 +27,44 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="InvSlotGrid" type="HFlowContainer" parent="MarginContainer" unique_id=1130829614]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=437854556]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/InvSlotGrid" unique_id=437854556]
+[node name="Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=530792482]
+layout_mode = 2
+size_flags_stretch_ratio = 0.21
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Panel" unique_id=403627305]
+layout_mode = 2
+
+[node name="Load" type="Label" parent="MarginContainer/VBoxContainer/Panel/HBoxContainer" unique_id=1184113203]
+layout_mode = 2
+text = "WT: 96.5 / 234"
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1388441394]
+custom_minimum_size = Vector2(160, 160)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/InvSlotGrid/VBoxContainer" unique_id=746171580]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer" unique_id=2039531824]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=1956091834]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/InvSlotGrid/VBoxContainer/MarginContainer" unique_id=1634408904]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1634408904]
 layout_mode = 2
+text = "Cool inventory stuff!"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/InvSlotGrid/VBoxContainer" unique_id=2096047559]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=2096047559]
 custom_minimum_size = Vector2(10, 10)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 
-[node name="InvSlotGrid" type="HFlowContainer" parent="MarginContainer/InvSlotGrid/VBoxContainer/ScrollContainer" unique_id=1498744038]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/InvSlotGrid" unique_id=1388441394]
-custom_minimum_size = Vector2(160, 160)
+[node name="InvSlotGrid" type="HFlowContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=1498744038]
 layout_mode = 2
 size_flags_horizontal = 3

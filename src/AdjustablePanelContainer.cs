@@ -49,7 +49,7 @@ public partial class AdjustablePanelContainer : Control
 
 			foreach (Node node in panels)
 			{
-				if (node is AdjustablePanel panel && panel.IsOpen)
+				if (node is AdjustablePanel panel && panel.IsOpen && !panel.IsPinned)
 				{
 					anyOpen = true;
 					break;
@@ -58,7 +58,13 @@ public partial class AdjustablePanelContainer : Control
 
 			if (anyOpen)
 			{
-				GetTree().CallGroup("adjustable_panels", "ClosePanel");
+				foreach (Node node in panels)
+				{
+					if (node is AdjustablePanel panel && !panel.IsPinned)
+					{
+						panel.ClosePanel();
+					}
+				}
 			}
 			else
 			{

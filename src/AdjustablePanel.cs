@@ -15,6 +15,7 @@ public partial class AdjustablePanel : Control
 	[Export] private Label _titleLabel;
 	[Export] private Button _closeButton;
 	[Export] private Button _minMaxButton;
+	[Export] private Button _pinButton;
 	[Export] private Texture2D _maximizeIcon;
 	[Export] private Texture2D _minimizeIcon;
 
@@ -31,6 +32,8 @@ public partial class AdjustablePanel : Control
 
 	private bool _isOpen = false;
 	private bool _isFullscreen = false;
+	private bool _isPinned = false;
+	public bool IsPinned => _isPinned;
 
 	private bool _dragging = false;
 	private Vector2 _dragOffset;
@@ -101,6 +104,9 @@ public partial class AdjustablePanel : Control
 
 		if (_minMaxButton != null)
 			_minMaxButton.GuiInput += OnMinMaxButtonGuiInput;
+
+		if (_pinButton != null)
+			_pinButton.GuiInput += OnPinButtonGuiInput;
 
 		if (_panelScene != null)
 		{
@@ -233,6 +239,16 @@ public partial class AdjustablePanel : Control
 
 			_isFullscreen = false;
 			_minMaxButton.Icon = _maximizeIcon;
+		}
+	}
+
+	private void OnPinButtonGuiInput(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton mouseButton &&
+			mouseButton.ButtonIndex == MouseButton.Left)
+		{
+			if (!mouseButton.Pressed)
+				_isPinned = !_isPinned;
 		}
 	}
 

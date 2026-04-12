@@ -9,10 +9,6 @@ public partial class InventorySlot : Control
 	public override void _Ready()
 	{
 		CustomMinimumSize = _slotSize;
-		GD.Print("slot size in inv panel: " + _slotSize);
-		GD.Print("actual Inv slot size: " + Size);
-
-
 	}
 
 	public void SetSlotData(int index, Vector2 slotSize)

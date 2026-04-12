@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://bayuindod3qnk"]
+
+[ext_resource type="Script" uid="uid://hiq4xq85wsc" path="res://src/map-generation/MapPreview.cs" id="1_xyrje"]
+[ext_resource type="Theme" uid="uid://cc1yjmdreteje" path="res://menu_theme.tres" id="2_o31dl"]
+
+[node name="MapPreview" type="Control" unique_id=382069952 node_paths=PackedStringArray("_mapPreview", "_mapDisplayMenu")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_xyrje")
+_mapPreview = NodePath("VBoxContainer/PanelContainer/TextureRect")
+_mapSize = 1024
+_mapDisplayMenu = NodePath("VBoxContainer/PanelContainer2/MenuButton")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1524414792]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer" unique_id=1741690108]
+layout_mode = 2
+
+[node name="MenuButton" type="MenuButton" parent="VBoxContainer/PanelContainer2" unique_id=1839334355]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("2_o31dl")
+toggle_mode = false
+text = "Map Select"
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=1042655073]
+custom_minimum_size = Vector2(1028, 1028)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer" unique_id=327600735]
+texture_filter = 1
+custom_minimum_size = Vector2(1024, 1024)
+layout_mode = 2
+stretch_mode = 5

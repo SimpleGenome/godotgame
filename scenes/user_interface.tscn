@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cr4yf0xpvn5an" path="res://scenes/inventory_panel.tscn" id="4_xsrv6"]
 [ext_resource type="PackedScene" uid="uid://d3arjy1te5f4f" path="res://scenes/MenuBar.tscn" id="5_3xhqb"]
 [ext_resource type="PackedScene" uid="uid://b5qsyylxu5ihf" path="res://scenes/pause_menu.tscn" id="6_lmgon"]
+[ext_resource type="PackedScene" uid="uid://bayuindod3qnk" path="res://scenes/map_preview.tscn" id="8_sdud1"]
 
 [node name="UserInterface" type="CanvasLayer" unique_id=1943153530]
 
@@ -74,3 +75,10 @@ _inventoryPanel = NodePath("../../AdjustablePanelContainer/Inventory")
 _mapPanel = NodePath("../../AdjustablePanelContainer/WorldMap")
 
 [node name="PauseMenu" parent="." unique_id=2015271356 instance=ExtResource("6_lmgon")]
+
+[node name="MapPreview" parent="." unique_id=382069952 instance=ExtResource("8_sdud1")]
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 15.0
+offset_bottom = 15.0
+_seed = 79877
