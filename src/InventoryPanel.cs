@@ -13,8 +13,7 @@ public partial class InventoryPanel : Control
 	public override void _Ready()
 	{
 		_slotSize = new Vector2(_invSlotSize, _invSlotSize);
-		GD.Print("slot size in inv panel: " + _slotSize);
-
+		
 		for (int i = 0; i < _slotCount; i++)
 		{
 			var invSlot = _invSlotScene.Instantiate<InventorySlot>();

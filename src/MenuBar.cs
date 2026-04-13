@@ -6,13 +6,15 @@ public partial class MenuBar : Control
 	[Export] private HBoxContainer _slots;
 	[Export] private PackedScene _menuButtonScene;
 	[Export] private Vector2 _buttonSize = new Vector2(20.0f, 20.0f);
+	[Export] private MarginContainer _slotMarginContainer;
+	[Export] private int _slotPadding = 4;
 
+	[ExportGroup("Panel Assignments")] 
 	[Export] private AdjustablePanel _inventoryPanel;
 	[Export] private AdjustablePanel _characterPanel;
 	[Export] private AdjustablePanel _skillsPanel;
 	[Export] private AdjustablePanel _mapPanel;
 	[Export] private AdjustablePanel _questLogPanel;
-	[Export] private AdjustablePanel _pausePanel;
 
 	public class PanelShortcut
 	{
@@ -48,8 +50,18 @@ public partial class MenuBar : Control
 			_slots.AddChild(slot);
 		}
 
-		float menuBarLength = _hotkeyIds.Length * (_buttonSize.X + 4) + (4 * 2);
-		float menuBarHeight = _buttonSize.Y + 4 + (4 * 2);
+		if (_slotMarginContainer != null)
+		{
+			foreach (var margin in (string[])["MarginLeft", "MarginRight", "MarginTop", "MarginBottom"])
+			{
+				_slotMarginContainer.AddThemeConstantOverride(margin, _slotPadding);
+			}
+		}
+
+		_slots.AddThemeConstantOverride("Separation", _slotPadding);
+
+		float menuBarLength = _hotkeyIds.Length * (_buttonSize.X + _slotPadding) + (_slotPadding * 2);
+		float menuBarHeight = _buttonSize.Y + _slotPadding + (_slotPadding * 2);
 
 		Size = new Vector2(menuBarLength, menuBarHeight);
 

@@ -3,6 +3,7 @@ using Godot;
 public partial class TestMap
 {
     // to drive real gameplay terrain.
+
     public static (float[,], ImageTexture) GenerateHeightMap(
         int mapSize,
         int seed,
@@ -36,8 +37,13 @@ public partial class TestMap
 
         Image heightImage = Image.CreateEmpty(mapSize, mapSize, false, Image.Format.Rgba8);
 
-        Vector2 center = new Vector2((mapSize - 1) / 2f, (mapSize - 1) / 2f);
+        Vector2 center = new Vector2(mapSize / 2f, mapSize / 2f);
         float maxDistance = center.Length();
+
+        float highestPixel = 0.5f;
+
+        float orientation = MapGenTools.NextRandomFloat();
+        GD.Print($"orientation: {orientation}");
 
         for (int y = 0; y < mapSize; y++)
         {
@@ -52,13 +58,22 @@ public partial class TestMap
                 n2 = (n2 + 1f) * 0.5f;
 
                 // 3) Blend the layers.
-                float height = n1 * 0.75f + n2 * 0.25f;
+                float height = n1 * 0.8f + n2 * 0.2f;
+                // height *= height;
+
+                // if (height >= 0.5)
+                //     height *= 1.2f;
 
                 // 4) Apply an island-style falloff:
                 //    center = more land, edges = more water.
-                // Vector2 p = new Vector2(x, y);
-                // float distance01 = p.DistanceTo(center) / maxDistance;
+                // Vector2 pixelLocation = new Vector2(x, y);
+                // float distance01 = pixelLocation.DistanceTo(center) / maxDistance;
                 // float falloff = Mathf.SmoothStep(0f, 1f, distance01);
+
+                //calculate height based on position and gradient
+                float pixelXDistance = x / (float)mapSize;
+                float pixelYDistance = y / (float)mapSize;
+                height = ((pixelXDistance * orientation) + (pixelYDistance * (1 - orientation))) * height;
 
                 // float islandMask = 1f - falloff;
                 // islandMask *= islandMask; // stronger push toward water at the edges
@@ -68,10 +83,23 @@ public partial class TestMap
                 // // Small center boost so islands don't vanish too easily.
                 // height += (1f - distance01) * 0.10f;
 
-                // height = Mathf.Clamp(height, 0f, 1f);
+                height = Mathf.Clamp(height, 0f, 1f);
                 heightMap[x, y] = height;
+                if (highestPixel < height)
+                {
+                    highestPixel = height;
+                }
+            }
+        }
 
-                heightImage.SetPixel(x, y, PickTerrainColor(height));
+
+        for (int y = 0; y < mapSize; y++)
+        {
+            for (int x = 0; x < mapSize; x++)
+            {
+                float scale = 1 / highestPixel;
+                heightMap[x, y] *= scale;
+                heightImage.SetPixel(x, y, PickTerrainColor(heightMap[x, y]));
             }
         }
 
@@ -82,21 +110,8 @@ public partial class TestMap
 
     private static Color PickTerrainColor(float h)
     {
-        if (h < 0.1f)
-            return new Color(0.05f, 0.12f, 0.22f); // deep water
-
-        if (h < 0.15f)
-            return new Color(0.10f, 0.24f, 0.42f); // shallow water
-
-        if (h < 0.18f)
-            return new Color(0.82f, 0.76f, 0.52f); // beach
-
-        if (h < 0.28)
-            return new Color(0.18f, 0.52f, 0.24f); // grassland
-
-        if (h < 0.45f)
-            return new Color(0.12f, 0.38f, 0.18f); // forest / hills
-
-        return new Color(0.55f, 0.55f, 0.58f); // mountain
+        if (h < 0.3f)
+            return new Color(0.1f, 0.3f, 0.8f);
+        return new Color(h, h, h);
     }
 }

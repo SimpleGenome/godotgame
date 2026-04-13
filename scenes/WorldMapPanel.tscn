@@ -2,11 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://cc1yjmdreteje" path="res://menu_theme.tres" id="2_b8rcd"]
 [ext_resource type="PackedScene" uid="uid://cl14kc3u6lhdw" path="res://scenes/world_map_texture.tscn" id="2_ig0vj"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ethb"]
-content_margin_left = 2.0
-content_margin_top = 2.0
-bg_color = Color(0.11, 0.07509333, 0.0352, 0.47058824)
+[ext_resource type="StyleBox" uid="uid://bof7v4snl76ei" path="res://StyleBox_World_Map_Details_Bar.tres" id="3_b8rcd"]
 
 [node name="WorldMapPanel" type="Control" unique_id=1207472688]
 layout_mode = 3
@@ -53,7 +49,7 @@ _zoomLabel = NodePath("../../Panel/HBoxContainer/ZoomLabel")
 [node name="Panel" type="PanelContainer" parent="MarginContainer/Panel/MarginContainer" unique_id=1181621776]
 layout_mode = 2
 size_flags_vertical = 8
-theme_override_styles/panel = SubResource("StyleBoxFlat_5ethb")
+theme_override_styles/panel = ExtResource("3_b8rcd")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/Panel/MarginContainer/Panel" unique_id=1353698151]
 layout_mode = 2

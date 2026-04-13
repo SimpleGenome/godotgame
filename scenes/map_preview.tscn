@@ -2,14 +2,20 @@
 
 [ext_resource type="Script" uid="uid://hiq4xq85wsc" path="res://src/map-generation/MapPreview.cs" id="1_xyrje"]
 [ext_resource type="Theme" uid="uid://cc1yjmdreteje" path="res://menu_theme.tres" id="2_o31dl"]
+[ext_resource type="StyleBox" uid="uid://bof7v4snl76ei" path="res://StyleBox_World_Map_Details_Bar.tres" id="3_wn4pc"]
 
-[node name="MapPreview" type="Control" unique_id=382069952 node_paths=PackedStringArray("_mapPreview", "_mapDisplayMenu")]
+[node name="MapPreview" type="Control" unique_id=382069952 node_paths=PackedStringArray("_mapPreview", "_mapDisplayMenu", "_mouseXPosLabel", "_mouseYPosLabel", "_heightLabel")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_xyrje")
 _mapPreview = NodePath("VBoxContainer/PanelContainer/TextureRect")
 _mapSize = 1024
+_seed = 346345
+_cellCount = 128
 _mapDisplayMenu = NodePath("VBoxContainer/PanelContainer2/MenuButton")
+_mouseXPosLabel = NodePath("VBoxContainer/PanelContainer/Panel/HBoxContainer/mouseXPos")
+_mouseYPosLabel = NodePath("VBoxContainer/PanelContainer/Panel/HBoxContainer/mouseYPos")
+_heightLabel = NodePath("VBoxContainer/PanelContainer/Panel/HBoxContainer/height")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1524414792]
 layout_mode = 0
@@ -35,3 +41,23 @@ texture_filter = 1
 custom_minimum_size = Vector2(1024, 1024)
 layout_mode = 2
 stretch_mode = 5
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/PanelContainer" unique_id=1351063951]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = ExtResource("3_wn4pc")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/Panel" unique_id=231395836]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="mouseXPos" type="Label" parent="VBoxContainer/PanelContainer/Panel/HBoxContainer" unique_id=44165439]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="mouseYPos" type="Label" parent="VBoxContainer/PanelContainer/Panel/HBoxContainer" unique_id=1432035666]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="height" type="Label" parent="VBoxContainer/PanelContainer/Panel/HBoxContainer" unique_id=1728372610]
+layout_mode = 2

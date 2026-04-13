@@ -3,13 +3,14 @@
 [ext_resource type="Script" uid="uid://duegnjesu17a" path="res://src/MenuBar.cs" id="1_uxwis"]
 [ext_resource type="PackedScene" uid="uid://bxl84b4r4qn3x" path="res://scenes/MenuBarButton.tscn" id="2_4ngxf"]
 
-[node name="MenuBar" type="PanelContainer" unique_id=365594116 node_paths=PackedStringArray("_slots")]
+[node name="MenuBar" type="PanelContainer" unique_id=365594116 node_paths=PackedStringArray("_slots", "_slotMarginContainer")]
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_uxwis")
 _slots = NodePath("MarginContainer/Slots")
 _menuButtonScene = ExtResource("2_4ngxf")
 _buttonSize = Vector2(30, 30)
+_slotMarginContainer = NodePath("MarginContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1932131210]
 layout_mode = 2

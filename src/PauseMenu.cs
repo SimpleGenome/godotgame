@@ -6,16 +6,15 @@ public partial class PauseMenu : ColorRect
 
 	[Export] private Button _resumeButton;
 	private bool _isOpen = false;
-	private bool _isVisible = false;
 
 	public bool IsOpen => _isOpen;
 	public override void _Ready()
 	{
 		Visible = false;
-		_resumeButton.Pressed += OnMyButtonPressed;
+		_resumeButton.Pressed += OnResumeButtonPressed;
 	}
 
-	private void OnMyButtonPressed()
+	private void OnResumeButtonPressed()
 	{
 		ClosePanel();
 	}
@@ -44,5 +43,22 @@ public partial class PauseMenu : ColorRect
 			_isOpen = true;
 			Visible = true;
 		}
+	}
+
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		GD.Print($"Pause menu Open: {_isOpen}");
+		if (_isOpen)
+		{
+			if (@event.IsActionPressed("toggle_menu"))
+				return;
+
+			GetViewport().SetInputAsHandled();
+		}
+		else
+		{
+			return;
+		}
+
 	}
 }

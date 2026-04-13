@@ -67,12 +67,15 @@ offset_left = -272.0
 offset_top = -58.0
 offset_right = 272.0
 
-[node name="MenuBar" parent="FixedPanelContainer" unique_id=917596337 node_paths=PackedStringArray("_inventoryPanel", "_mapPanel") instance=ExtResource("5_3xhqb")]
+[node name="MenuBar" parent="FixedPanelContainer" unique_id=917596337 node_paths=PackedStringArray("_inventoryPanel", "_characterPanel", "_skillsPanel", "_mapPanel", "_questLogPanel") instance=ExtResource("5_3xhqb")]
 layout_mode = 1
 offset_right = 12.0
 offset_bottom = 12.0
 _inventoryPanel = NodePath("../../AdjustablePanelContainer/Inventory")
+_characterPanel = NodePath("../../AdjustablePanelContainer/Character")
+_skillsPanel = NodePath("../../AdjustablePanelContainer/Skills")
 _mapPanel = NodePath("../../AdjustablePanelContainer/WorldMap")
+_questLogPanel = NodePath("../../AdjustablePanelContainer/QuestLog")
 
 [node name="PauseMenu" parent="." unique_id=2015271356 instance=ExtResource("6_lmgon")]
 
@@ -81,4 +84,5 @@ offset_left = 15.0
 offset_top = 15.0
 offset_right = 15.0
 offset_bottom = 15.0
-_seed = 79877
+_seed = 234234
+_cellCount = 512

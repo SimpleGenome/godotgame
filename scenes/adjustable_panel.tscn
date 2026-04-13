@@ -16,9 +16,9 @@ _resizeHandleTR = NodePath("ResizeHandleTR")
 _resizeHandleTL = NodePath("ResizeHandleTL")
 _titleBar = NodePath("Frame/Margin/VBox/TitleBar")
 _titleLabel = NodePath("Frame/Margin/VBox/TitleBar/TitleRow/Title")
-_closeButton = NodePath("Frame/Margin/VBox/TitleBar/TitleRow/WindowButtons/CloseButton")
-_minMaxButton = NodePath("Frame/Margin/VBox/TitleBar/TitleRow/WindowButtons/MaxMinButton")
-_pinButton = NodePath("Frame/Margin/VBox/TitleBar/TitleRow/WindowButtons/PinButton")
+_closeButton = NodePath("Frame/Margin/VBox/TitleBar/TitleRow/MarginContainer/WindowButtons/CloseButton")
+_minMaxButton = NodePath("Frame/Margin/VBox/TitleBar/TitleRow/MarginContainer/WindowButtons/MaxMinButton")
+_pinButton = NodePath("Frame/Margin/VBox/TitleBar/TitleRow/MarginContainer/WindowButtons/PinButton")
 _maximizeIcon = ExtResource("2_ixftj")
 _minimizeIcon = ExtResource("3_h86kn")
 _contentHost = NodePath("Frame/Margin/VBox/ContentHost")
@@ -48,36 +48,45 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="WindowButtons" type="HBoxContainer" parent="Frame/Margin/VBox/TitleBar/TitleRow" unique_id=534384669]
+[node name="MarginContainer" type="MarginContainer" parent="Frame/Margin/VBox/TitleBar/TitleRow" unique_id=765594154]
 layout_mode = 2
 size_flags_horizontal = 10
-theme_override_constants/separation = 0
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
-[node name="PinButton" type="Button" parent="Frame/Margin/VBox/TitleBar/TitleRow/WindowButtons" unique_id=840515162]
-custom_minimum_size = Vector2(15, 15)
+[node name="WindowButtons" type="HBoxContainer" parent="Frame/Margin/VBox/TitleBar/TitleRow/MarginContainer" unique_id=534384669]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PinButton" type="Button" parent="Frame/Margin/VBox/TitleBar/TitleRow/MarginContainer/WindowButtons" unique_id=840515162]
+custom_minimum_size = Vector2(10, 10)
 layout_mode = 2
 size_flags_horizontal = 10
 mouse_default_cursor_shape = 2
-theme_override_colors/icon_pressed_color = Color(1, 0.6, 0, 1)
+theme_type_variation = &"AdjustablePanelButton"
 toggle_mode = true
 icon = ExtResource("4_tcnyi")
 icon_alignment = 1
 expand_icon = true
 
-[node name="MaxMinButton" type="Button" parent="Frame/Margin/VBox/TitleBar/TitleRow/WindowButtons" unique_id=1146036000]
-custom_minimum_size = Vector2(15, 15)
+[node name="MaxMinButton" type="Button" parent="Frame/Margin/VBox/TitleBar/TitleRow/MarginContainer/WindowButtons" unique_id=1146036000]
+custom_minimum_size = Vector2(10, 10)
 layout_mode = 2
 size_flags_horizontal = 10
 mouse_default_cursor_shape = 2
+theme_type_variation = &"AdjustablePanelButton"
 icon = ExtResource("2_ixftj")
 icon_alignment = 1
 expand_icon = true
 
-[node name="CloseButton" type="Button" parent="Frame/Margin/VBox/TitleBar/TitleRow/WindowButtons" unique_id=1988481383]
-custom_minimum_size = Vector2(15, 15)
+[node name="CloseButton" type="Button" parent="Frame/Margin/VBox/TitleBar/TitleRow/MarginContainer/WindowButtons" unique_id=1988481383]
+custom_minimum_size = Vector2(10, 10)
 layout_mode = 2
 size_flags_horizontal = 10
 mouse_default_cursor_shape = 2
+theme_type_variation = &"AdjustablePanelButton"
 icon = ExtResource("2_vrw0b")
 icon_alignment = 1
 expand_icon = true
