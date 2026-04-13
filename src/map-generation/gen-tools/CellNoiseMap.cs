@@ -6,7 +6,6 @@ public static class CellNoiseHelper
 {
     public class CellData
     {
-        // Unique ID for this cell
         public int Id;
 
         // Random seed point for this cell on the map
@@ -21,10 +20,7 @@ public static class CellNoiseHelper
 
     public class CellMapData
     {
-        // Map width in pixels/cells
         public int Width;
-
-        // Map height in pixels/cells
         public int Height;
 
         // For each [x, y], stores the ID of the owning cell

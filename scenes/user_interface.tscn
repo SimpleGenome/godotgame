@@ -85,4 +85,4 @@ offset_top = 15.0
 offset_right = 15.0
 offset_bottom = 15.0
 _seed = 234234
-_cellCount = 512
+_cellCount = 1024
