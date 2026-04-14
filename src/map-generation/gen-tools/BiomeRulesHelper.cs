@@ -69,36 +69,36 @@ public static class BiomeRulesHelper
     {
         Dictionary<BiomeType, BiomeDefinition> biomes = new();
 
-        AddBiome(biomes, BiomeType.Desert,    "Desert",           new Color(0.90f, 0.78f, 0.40f), 0.80f, 0.35f);
-        AddBiome(biomes, BiomeType.Forest,    "Forest",           new Color(0.18f, 0.55f, 0.22f), 1.30f, 0.45f);
-        AddBiome(biomes, BiomeType.Grassland, "Grassland",        new Color(0.45f, 0.72f, 0.30f), 1.60f, 0.40f);
-        AddBiome(biomes, BiomeType.Mountains, "Mountains",        new Color(0.55f, 0.55f, 0.60f), 0.70f, 0.65f);
-        AddBiome(biomes, BiomeType.Swamp,     "Swamp",            new Color(0.22f, 0.36f, 0.26f), 0.55f, 0.35f);
-        AddBiome(biomes, BiomeType.Lake,      "Lake",             new Color(0.20f, 0.50f, 0.85f), 0.40f, 0.30f, maxSameNeighbors: 3);
-        AddBiome(biomes, BiomeType.Wasteland, "Wasteland",        new Color(0.42f, 0.34f, 0.34f), 0.28f, 0.20f);
-        AddBiome(biomes, BiomeType.Tundra,    "Tundra",           new Color(0.78f, 0.86f, 0.92f), 0.45f, 0.40f);
-        AddBiome(biomes, BiomeType.Ocean,     "Ocean",            new Color(0.08f, 0.24f, 0.62f), 1.05f, 0.90f);
-        AddBiome(biomes, BiomeType.Coast,     "Coast",            new Color(0.82f, 0.84f, 0.62f), 0.85f, 0.20f, maxSameNeighbors: 3);
-        AddBiome(biomes, BiomeType.Hills,     "Hills",            new Color(0.52f, 0.62f, 0.36f), 1.00f, 0.30f);
-        AddBiome(biomes, BiomeType.Jungle,    "Jungle",           new Color(0.10f, 0.45f, 0.18f), 0.45f, 0.50f);
-        AddBiome(biomes, BiomeType.Taiga,     "Taiga",            new Color(0.28f, 0.46f, 0.34f), 0.65f, 0.45f);
-        AddBiome(biomes, BiomeType.Snow,      "Snow",             new Color(0.94f, 0.97f, 1.00f), 0.35f, 0.55f);
-        AddBiome(biomes, BiomeType.Badlands,  "Badlands",         new Color(0.69f, 0.42f, 0.26f), 0.40f, 0.30f);
-        AddBiome(biomes, BiomeType.Volcanic,  "Volcanic",         new Color(0.24f, 0.22f, 0.24f), 0.10f, 0.25f, maxSameNeighbors: 2);
-        AddBiome(biomes, BiomeType.Marsh,     "Marsh",            new Color(0.32f, 0.48f, 0.30f), 0.45f, 0.35f);
-        AddBiome(biomes, BiomeType.Savanna,   "Savanna",          new Color(0.72f, 0.68f, 0.30f), 0.75f, 0.35f);
+        AddBiome(biomes, BiomeType.Desert, "Desert", new Color(0.90f, 0.78f, 0.40f), 0.80f, 0.35f);
+        AddBiome(biomes, BiomeType.Forest, "Forest", new Color(0.18f, 0.55f, 0.22f), 1.30f, 0.45f);
+        AddBiome(biomes, BiomeType.Grassland, "Grassland", new Color(0.45f, 0.72f, 0.30f), 1.60f, 0.40f);
+        AddBiome(biomes, BiomeType.Mountains, "Mountains", new Color(0.55f, 0.55f, 0.60f), 0.70f, 0.65f);
+        AddBiome(biomes, BiomeType.Swamp, "Swamp", new Color(0.22f, 0.36f, 0.26f), 0.55f, 0.35f);
+        AddBiome(biomes, BiomeType.Lake, "Lake", new Color(0.20f, 0.50f, 0.85f), 0.40f, 0.30f, maxSameNeighbors: 2);
+        AddBiome(biomes, BiomeType.Wasteland, "Wasteland", new Color(0.42f, 0.34f, 0.34f), 0.28f, 0.20f);
+        AddBiome(biomes, BiomeType.Tundra, "Tundra", new Color(0.78f, 0.86f, 0.92f), 0.45f, 0.40f);
+        AddBiome(biomes, BiomeType.Ocean, "Ocean", new Color(0.08f, 0.24f, 0.62f), 0.4f, 1.30f);
+        AddBiome(biomes, BiomeType.Coast, "Coast", new Color(0.82f, 0.84f, 0.62f), 0.55f, 0.15f, maxSameNeighbors: 3);
+        AddBiome(biomes, BiomeType.Hills, "Hills", new Color(0.52f, 0.62f, 0.36f), 1.00f, 0.30f);
+        AddBiome(biomes, BiomeType.Jungle, "Jungle", new Color(0.10f, 0.45f, 0.18f), 0.45f, 0.50f);
+        AddBiome(biomes, BiomeType.Taiga, "Taiga", new Color(0.28f, 0.46f, 0.34f), 0.65f, 0.45f);
+        AddBiome(biomes, BiomeType.Snow, "Snow", new Color(0.94f, 0.97f, 1.00f), 0.35f, 0.55f);
+        AddBiome(biomes, BiomeType.Badlands, "Badlands", new Color(0.69f, 0.42f, 0.26f), 0.40f, 0.30f);
+        AddBiome(biomes, BiomeType.Volcanic, "Volcanic", new Color(0.24f, 0.22f, 0.24f), 0.10f, 0.25f, maxSameNeighbors: 2);
+        AddBiome(biomes, BiomeType.Marsh, "Marsh", new Color(0.32f, 0.48f, 0.30f), 0.45f, 0.35f);
+        AddBiome(biomes, BiomeType.Savanna, "Savanna", new Color(0.72f, 0.68f, 0.30f), 0.75f, 0.35f);
 
-        AddClusterBiome(biomes, BiomeType.DeepOcean,       "Deep Ocean",       new Color(0.03f, 0.10f, 0.36f), BiomeType.Ocean);
-        AddClusterBiome(biomes, BiomeType.DeepDesert,      "Deep Desert",      new Color(0.82f, 0.64f, 0.25f), BiomeType.Desert);
-        AddClusterBiome(biomes, BiomeType.GreatMountain,   "Great Mountain",   new Color(0.40f, 0.40f, 0.45f), BiomeType.Mountains);
+        AddClusterBiome(biomes, BiomeType.DeepOcean, "Deep Ocean", new Color(0.03f, 0.10f, 0.36f), BiomeType.Ocean);
+        AddClusterBiome(biomes, BiomeType.DeepDesert, "Deep Desert", new Color(0.82f, 0.64f, 0.25f), BiomeType.Desert);
+        AddClusterBiome(biomes, BiomeType.GreatMountain, "Great Mountain", new Color(0.40f, 0.40f, 0.45f), BiomeType.Mountains);
         AddClusterBiome(biomes, BiomeType.AncientWoodland, "Ancient Woodland", new Color(0.10f, 0.36f, 0.14f), BiomeType.Forest);
-        AddClusterBiome(biomes, BiomeType.Heartland,       "Heartland",        new Color(0.56f, 0.80f, 0.36f), BiomeType.Grassland);
-        AddClusterBiome(biomes, BiomeType.Mire,            "Mire",             new Color(0.16f, 0.27f, 0.18f), BiomeType.Swamp);
-        AddClusterBiome(biomes, BiomeType.DeepJungle,      "Deep Jungle",      new Color(0.06f, 0.30f, 0.10f), BiomeType.Jungle);
-        AddClusterBiome(biomes, BiomeType.Glacier,         "Glacier",          new Color(0.82f, 0.92f, 0.98f), BiomeType.Snow);
+        AddClusterBiome(biomes, BiomeType.Heartland, "Heartland", new Color(0.56f, 0.80f, 0.36f), BiomeType.Grassland);
+        AddClusterBiome(biomes, BiomeType.Mire, "Mire", new Color(0.16f, 0.27f, 0.18f), BiomeType.Swamp);
+        AddClusterBiome(biomes, BiomeType.DeepJungle, "Deep Jungle", new Color(0.06f, 0.30f, 0.10f), BiomeType.Jungle);
+        AddClusterBiome(biomes, BiomeType.Glacier, "Glacier", new Color(0.82f, 0.92f, 0.98f), BiomeType.Snow);
 
         // Adjacency
-        LinkBiomes(biomes, BiomeType.Ocean, BiomeType.Ocean, BiomeType.Coast);
+        LinkBiomes(biomes, BiomeType.Ocean, BiomeType.Ocean, BiomeType.DeepOcean, BiomeType.Coast, BiomeType.Marsh, BiomeType.Swamp);
         LinkBiomes(biomes, BiomeType.Coast, BiomeType.Lake, BiomeType.Swamp, BiomeType.Marsh, BiomeType.Grassland, BiomeType.Forest, BiomeType.Jungle, BiomeType.Desert, BiomeType.Savanna);
 
         LinkBiomes(biomes, BiomeType.Lake, BiomeType.Lake, BiomeType.Grassland, BiomeType.Forest, BiomeType.Swamp, BiomeType.Marsh, BiomeType.Hills, BiomeType.Mountains, BiomeType.Tundra, BiomeType.Snow, BiomeType.Jungle, BiomeType.Coast);
@@ -147,8 +147,8 @@ public static class BiomeRulesHelper
         AddNeighborModifier(biomes, BiomeType.Savanna, BiomeType.Desert, 1.40f);
         AddNeighborModifier(biomes, BiomeType.Badlands, BiomeType.Desert, 1.25f);
 
-        AddNeighborModifier(biomes, BiomeType.Ocean, BiomeType.Ocean, 2.20f);
-        AddNeighborModifier(biomes, BiomeType.Coast, BiomeType.Ocean, 2.20f);
+        AddNeighborModifier(biomes, BiomeType.Ocean, BiomeType.Ocean, 1.50f);
+        AddNeighborModifier(biomes, BiomeType.Coast, BiomeType.Ocean, 1.50f);
         AddNeighborModifier(biomes, BiomeType.Coast, BiomeType.Grassland, 1.20f);
 
         AddNeighborModifier(biomes, BiomeType.Taiga, BiomeType.Snow, 1.40f);
@@ -161,7 +161,25 @@ public static class BiomeRulesHelper
 
         InheritClusterNeighbors(biomes);
 
+        SetExactNeighbors(
+            biomes,
+            BiomeType.DeepOcean,
+            BiomeType.DeepOcean,
+            BiomeType.Ocean
+        );
+
         return biomes;
+    }
+
+    private static void SetExactNeighbors(
+        Dictionary<BiomeType, BiomeDefinition> biomes,
+        BiomeType biome,
+        params BiomeType[] neighbors)
+    {
+        biomes[biome].AllowedNeighbors.Clear();
+
+        foreach (BiomeType neighbor in neighbors)
+            biomes[biome].AllowedNeighbors.Add(neighbor);
     }
 
     public static List<BiomeType> GetAllBiomeTypes()
@@ -193,7 +211,7 @@ public static class BiomeRulesHelper
     {
         return new List<ClusterPromotionRule>
         {
-            new ClusterPromotionRule { BaseBiome = BiomeType.Ocean,     PromotedBiome = BiomeType.DeepOcean,       RequiredSameBiomeNeighbors = 3 },
+            new ClusterPromotionRule { BaseBiome = BiomeType.Ocean,     PromotedBiome = BiomeType.DeepOcean,       RequiredSameBiomeNeighbors = 4 },
             new ClusterPromotionRule { BaseBiome = BiomeType.Desert,    PromotedBiome = BiomeType.DeepDesert,      RequiredSameBiomeNeighbors = 3 },
             new ClusterPromotionRule { BaseBiome = BiomeType.Mountains, PromotedBiome = BiomeType.GreatMountain,   RequiredSameBiomeNeighbors = 3 },
             new ClusterPromotionRule { BaseBiome = BiomeType.Forest,    PromotedBiome = BiomeType.AncientWoodland, RequiredSameBiomeNeighbors = 3 },

@@ -538,6 +538,20 @@ public static class CellBiomeWfcHelper
                 if (biome != rule.BaseBiome)
                     continue;
 
+                if (rule.PromotedBiome == BiomeRulesHelper.BiomeType.DeepOcean)
+                {
+                    if (IsDeepOceanCandidate(
+                        cellId,
+                        result.CellNeighbors,
+                        originalBiomes,
+                        rule.RequiredSameBiomeNeighbors
+                    ))
+                    {
+                        result.CellBiomes[cellId] = rule.PromotedBiome;
+                    }
+                    continue;
+                }
+
                 int matchingNeighbors = CountMatchingNeighbors(
                     cellId,
                     rule.BaseBiome,
@@ -549,6 +563,32 @@ public static class CellBiomeWfcHelper
                     result.CellBiomes[cellId] = rule.PromotedBiome;
             }
         }
+    }
+
+    private static bool IsDeepOceanCandidate(
+    int cellId,
+    Dictionary<int, HashSet<int>> neighborGraph,
+    Dictionary<int, BiomeRulesHelper.BiomeType> biomeMap,
+    int requiredOceanNeighbors)
+    {
+        int oceanLikeNeighbors = 0;
+
+        foreach (int neighborId in neighborGraph[cellId])
+        {
+            if (!biomeMap.TryGetValue(neighborId, out BiomeRulesHelper.BiomeType neighborBiome))
+                return false;
+
+            if (neighborBiome == BiomeRulesHelper.BiomeType.Ocean)
+            {
+                oceanLikeNeighbors++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return oceanLikeNeighbors >= requiredOceanNeighbors;
     }
 
     private static int CountMatchingNeighbors(

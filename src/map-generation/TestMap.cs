@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Godot;
 
 public partial class TestMap
@@ -8,10 +10,10 @@ public partial class TestMap
         int mapSize,
         int seed,
         float baseFrequency,
-        float detailFrequency
+        float detailFrequency,
+        float orientation
     )
     {
-        // Big shapes
         var baseNoise = new FastNoiseLite
         {
             Seed = seed,
@@ -20,75 +22,43 @@ public partial class TestMap
             FractalLacunarity = 2.0f,
             FractalGain = 0.5f,
             DomainWarpEnabled = true,
-            DomainWarpAmplitude = 35.0f
-        };
-
-        // Smaller detail on top
-        var detailNoise = new FastNoiseLite
-        {
-            Seed = seed + 1000,
-            Frequency = detailFrequency,
-            FractalOctaves = 3,
-            FractalLacunarity = 2.0f,
-            FractalGain = 0.5f
+            DomainWarpAmplitude = 35.0f,
+            NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
         };
 
         float[,] heightMap = new float[mapSize, mapSize];
 
         Image heightImage = Image.CreateEmpty(mapSize, mapSize, false, Image.Format.Rgba8);
 
-        Vector2 center = new Vector2(mapSize / 2f, mapSize / 2f);
-        float maxDistance = center.Length();
-
         float highestPixel = 0.5f;
 
-        float orientation = MapGenTools.NextRandomFloat();
-        GD.Print($"orientation: {orientation}");
 
         for (int y = 0; y < mapSize; y++)
         {
             for (int x = 0; x < mapSize; x++)
             {
-                // 1) Sample two layers of noise.
                 float n1 = baseNoise.GetNoise2D(x, y);
-                float n2 = detailNoise.GetNoise2D(x, y);
 
-                // 2) Remap from [-1, 1] to [0, 1].
                 n1 = (n1 + 1f) * 0.5f;
-                n2 = (n2 + 1f) * 0.5f;
 
-                // 3) Blend the layers.
-                float height = n1 * 0.8f + n2 * 0.2f;
-                // height *= height;
+                float pixelXDistance = x / (float)(mapSize - 1);
+                float pixelYDistance = y / (float)(mapSize - 1);
 
-                // if (height >= 0.5)
-                //     height *= 1.2f;
-
-                // 4) Apply an island-style falloff:
-                //    center = more land, edges = more water.
-                // Vector2 pixelLocation = new Vector2(x, y);
-                // float distance01 = pixelLocation.DistanceTo(center) / maxDistance;
-                // float falloff = Mathf.SmoothStep(0f, 1f, distance01);
-
-                //calculate height based on position and gradient
-                float pixelXDistance = x / (float)mapSize;
-                float pixelYDistance = y / (float)mapSize;
-                height = ((pixelXDistance * orientation) + (pixelYDistance * (1 - orientation))) * height;
-
-                // float islandMask = 1f - falloff;
-                // islandMask *= islandMask; // stronger push toward water at the edges
-
-                // height *= islandMask;
-
-                // // Small center boost so islands don't vanish too easily.
-                // height += (1f - distance01) * 0.10f;
+                float gradient = (pixelXDistance * orientation) + (pixelYDistance * (1f - orientation));
+                gradient = 1f - 1.2f * gradient * gradient + 0.5f * gradient * gradient * gradient;;
+                float height = (n1 * 0.7f) + (gradient * 0.3f);
+                
+                height *= height * height;
 
                 height = Mathf.Clamp(height, 0f, 1f);
                 heightMap[x, y] = height;
+
                 if (highestPixel < height)
                 {
                     highestPixel = height;
                 }
+
+
             }
         }
 
@@ -99,6 +69,17 @@ public partial class TestMap
             {
                 float scale = 1 / highestPixel;
                 heightMap[x, y] *= scale;
+                List<float> heightIncreaseScales = [0.1f, 0.3f, 0.5f, 0.65f];
+                foreach (var heightLevel in heightIncreaseScales)
+                {
+                    if (heightMap[x, y] >= heightLevel)
+                    {
+                        float fullHeightDiff = 1.0f - heightMap[x, y];
+                        float cutoffHeight = heightMap[x, y] - heightLevel;
+                        heightMap[x, y] += fullHeightDiff * cutoffHeight;
+                    }
+                }
+                heightMap[x, y] = ReduceBelowCutoff(1.0f, heightMap[x, y], 0.35f);
                 heightImage.SetPixel(x, y, PickTerrainColor(heightMap[x, y]));
             }
         }
@@ -108,10 +89,51 @@ public partial class TestMap
         return (heightMap, heightTexture);
     }
 
+    public static float ReduceBelowCutoff(float cutoff, float height, float minimum)
+    {
+        if (cutoff <= 0.0 || cutoff > 1.0)
+            throw new ArgumentOutOfRangeException(nameof(cutoff), "cutoff must be > 0 and < 1.");
+
+        if (height < 0.0 || height > 1.0)
+            throw new ArgumentOutOfRangeException(nameof(height), "height must be between 0 and 1.");
+
+        if (minimum < 0.0 || minimum >= cutoff)
+            throw new ArgumentOutOfRangeException(nameof(minimum), "minimum must be >= 0 and < cutoff.");
+
+        // Outside the affected range, leave unchanged
+        if (height <= minimum || height >= cutoff)
+            return height;
+
+        float range = cutoff - minimum;
+        float t = (height - minimum) / range;   // 0 = minimum, 1 = cutoff
+
+        // SmoothStep helper
+        static float SmoothStep(float x) => (float)(x * x * (3.0 - 2.0 * x));
+
+        // Soft shoulder near the cutoff, then steeper reduction below it.
+        // Peak effect is slightly below the cutoff, not exactly at it.
+        float reduction = (float)(SmoothStep(t * t) * Math.Sqrt(1.0 - t));
+
+        float adjustedT = t - reduction;
+
+        // Clamp to valid range just in case of floating-point edge cases
+        adjustedT = (float)Math.Max(0.0, Math.Min(1.0, adjustedT));
+
+        return minimum + adjustedT * range;
+    }
+
     private static Color PickTerrainColor(float h)
     {
-        if (h < 0.3f)
-            return new Color(0.1f, 0.3f, 0.8f);
+        if (h < 0.5f)
+            return new Color(0.1f + (h * 0.5f), 0.2f + (h * 0.6f), 0.8f);
+        if (h < 0.52f)
+            return new Color(0.7f + (h * 0.25f), 0.60f + (h * 0.4f), 0.45f + (h * 0.25f));
+        if (h < 0.72f)
+            return new Color(0.15f + (h * 0.15f), 0.30f + (h * 0.2f), 0.15f + (h * 0.15f));
+        if (h < 0.89f)
+            return new Color(h - 0.2f, h - 0.2f, h - 0.2f);
+
         return new Color(h, h, h);
+
     }
 }

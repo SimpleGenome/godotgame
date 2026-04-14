@@ -16,7 +16,7 @@ public partial class MapPreview : Control
 	[Export] private Label _mouseXPosLabel;
 	[Export] private Label _mouseYPosLabel;
 	[Export] private Label _heightLabel;
-
+	private float _orientation;
 	private CellNoiseHelper.CellMapData _cellMap;
 	private Texture2D _cellTexture;
 	private CellBiomeWfcHelper.BiomeCellResult _biomeResult;
@@ -46,6 +46,8 @@ public partial class MapPreview : Control
 	public override void _Ready()
 	{
 		MapGenTools.InitRandom(_seed);
+		_orientation = MapGenTools.NextRandomFloat();
+		GD.Print("Orientation: " + _orientation);
 
 		_mapDisplayPopupMenu = _mapDisplayMenu.GetPopup();
 
@@ -68,7 +70,7 @@ public partial class MapPreview : Control
 		long biomeSeed = _seed ^ 0x9E3779B9;
 
 		(_biomeResult, _biomeTexture) = CellBiomeWfcHelper.GenerateBiomesAndTexture(
-			_cellMap, 
+			_cellMap,
 			(int)biomeSeed
 		);
 
@@ -76,7 +78,7 @@ public partial class MapPreview : Control
 		{
 			int cellId = pair.Key;
 			BiomeRulesHelper.BiomeType biome = pair.Value;
-			GD.Print($"Cell {cellId} => {biome}");
+			// GD.Print($"Cell {cellId} => {biome}");
 		}
 
 		(_heightMap, _heightTexture) = HeightMap.GenerateHeightMap(
@@ -90,7 +92,16 @@ public partial class MapPreview : Control
 			_mapSize,
 			_seed,
 			_baseFrequency,
-			_detailFrequency
+			_detailFrequency,
+			_orientation
+		);
+
+		(_temperatureMap, _temperatureTexture) = TemperatureMap.GenerateTemperatureMap(
+			_mapSize,
+			_seed,
+			_baseFrequency,
+			_detailFrequency,
+			_orientation
 		);
 
 		OnMapDisplayMenuChoice(0);
@@ -114,7 +125,7 @@ public partial class MapPreview : Control
 		{
 			_mouseXPosLabel.Text = $"X:{lmX}";
 			_mouseYPosLabel.Text = $"Y:{lmY}";
-			_heightLabel.Text = $"{_currentMapType}:{_testMap[lmX, lmY]}";
+			_heightLabel.Text = $"{_currentMapType}:{_currentMap[lmX, lmY]}";
 		}
 	}
 
