@@ -11,7 +11,8 @@ public partial class TemperatureMap
         int seed,
         float baseFrequency,
         float detailFrequency,
-        float orientation
+        float orientation,
+        float[,] heightMap
     )
     {
         // Big shapes
@@ -46,7 +47,7 @@ public partial class TemperatureMap
                 float pixelYDistance = y / (float)(mapSize - 1);
 
                 float gradient = (pixelXDistance * orientation) + (pixelYDistance * (1f - orientation));
-                float temperature = gradient;
+                float temperature = (gradient * 0.5f) + ((1 - heightMap[x, y]) * 0.5f);
 
                 temperature = Mathf.Clamp(temperature, 0f, 1f);
 

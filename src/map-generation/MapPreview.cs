@@ -58,29 +58,6 @@ public partial class MapPreview : Control
 
 		_mapDisplayPopupMenu.IdPressed += OnMapDisplayMenuChoice;
 
-		(_cellMap, _cellTexture) = CellNoiseHelper.GenerateCellMapAndTexture(
-			_mapSize,
-			_mapSize,
-			_cellCount,
-			_seed
-		);
-
-		GD.Print($"Generated {_cellMap.Cells.Count} cells");
-
-		long biomeSeed = _seed ^ 0x9E3779B9;
-
-		(_biomeResult, _biomeTexture) = CellBiomeWfcHelper.GenerateBiomesAndTexture(
-			_cellMap,
-			(int)biomeSeed
-		);
-
-		foreach (var pair in _biomeResult.CellBiomes)
-		{
-			int cellId = pair.Key;
-			BiomeRulesHelper.BiomeType biome = pair.Value;
-			// GD.Print($"Cell {cellId} => {biome}");
-		}
-
 		(_heightMap, _heightTexture) = HeightMap.GenerateHeightMap(
 			_mapSize,
 			_seed,
@@ -101,8 +78,32 @@ public partial class MapPreview : Control
 			_seed,
 			_baseFrequency,
 			_detailFrequency,
-			_orientation
+			_orientation,
+			_testMap
 		);
+
+		(_cellMap, _cellTexture) = CellNoiseHelper.GenerateCellMapAndTexture(
+			_mapSize,
+			_mapSize,
+			_cellCount,
+			_seed
+		);
+
+		long biomeSeed = _seed ^ 0x9E3779B9;
+
+		(_biomeResult, _biomeTexture) = CellBiomeWfcHelper.GenerateBiomesAndTexture(
+			_cellMap,
+			(int)biomeSeed
+		);
+
+		foreach (var pair in _biomeResult.CellBiomes)
+		{
+			int cellId = pair.Key;
+			BiomeRulesHelper.BiomeType biome = pair.Value;
+			// GD.Print($"Cell {cellId} => {biome}");
+		}
+
+		GD.Print($"Generated {_cellMap.Cells.Count} cells");
 
 		OnMapDisplayMenuChoice(0);
 
