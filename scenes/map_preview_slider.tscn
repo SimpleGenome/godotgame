@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://bhuni6vuvrx0b"]
+
+[ext_resource type="Script" uid="uid://cnnjkw0ce4nbp" path="res://src/map-generation/MapPreviewSlider.cs" id="1_ogh0t"]
+[ext_resource type="Texture2D" uid="uid://cysyfmxsopyhm" path="res://menu_burger.png" id="2_ogh0t"]
+[ext_resource type="Texture2D" uid="uid://clqs3k5gp86l3" path="res://Square_hopefully.png" id="3_efexn"]
+
+[node name="MapPreviewSlider" type="PanelContainer" unique_id=1740740964 node_paths=PackedStringArray("_sliderTitleLabel", "_slider", "_dragHandle", "_visibleButton")]
+offset_right = 52.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+script = ExtResource("1_ogh0t")
+_sliderTitleLabel = NodePath("HBoxContainer/MarginContainer/VBoxContainer/SliderLabel")
+_slider = NodePath("HBoxContainer/MarginContainer/VBoxContainer/TransparencySlider")
+_dragHandle = NodePath("HBoxContainer/DragHandle")
+_visibleButton = NodePath("HBoxContainer/VisibleButton")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=86873125]
+layout_mode = 2
+
+[node name="DragHandle" type="Button" parent="HBoxContainer" unique_id=1853463356]
+layout_mode = 2
+theme_type_variation = &"AdjustablePanelButton"
+icon = ExtResource("2_ogh0t")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer" unique_id=1447960004]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_right = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/MarginContainer" unique_id=1782855856]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="SliderLabel" type="Label" parent="HBoxContainer/MarginContainer/VBoxContainer" unique_id=332598360]
+layout_mode = 2
+
+[node name="TransparencySlider" type="HSlider" parent="HBoxContainer/MarginContainer/VBoxContainer" unique_id=642473571]
+layout_mode = 2
+
+[node name="VisibleButton" type="Button" parent="HBoxContainer" unique_id=504799342]
+layout_mode = 2
+theme_type_variation = &"AdjustablePanelButton"
+toggle_mode = true
+icon = ExtResource("3_efexn")

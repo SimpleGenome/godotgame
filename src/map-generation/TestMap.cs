@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using Godot;
 
 public partial class TestMap
 {
-    // to drive real gameplay terrain.
-
     public static (float[,], ImageTexture) GenerateHeightMap(
         int mapSize,
         int seed,
@@ -18,7 +15,7 @@ public partial class TestMap
         float snowLevel
     )
     {
-        var baseNoise = new FastNoiseLite
+        var continentNoise = new FastNoiseLite
         {
             Seed = seed,
             Frequency = baseFrequency,
@@ -30,100 +27,204 @@ public partial class TestMap
             NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
         };
 
-        float[,] heightMap = new float[mapSize, mapSize];
+        var mountainMaskNoise = new FastNoiseLite
+        {
+            Seed = seed + 1001,
+            Frequency = baseFrequency * 0.55f,
+            FractalOctaves = 3,
+            FractalLacunarity = 2.0f,
+            FractalGain = 0.5f,
+            NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
+        };
 
+        var ridgeNoise = new FastNoiseLite
+        {
+            Seed = seed + 2003,
+            Frequency = detailFrequency,
+            FractalOctaves = 1,
+            NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
+        };
+
+        var warpNoise = new FastNoiseLite
+        {
+            Seed = seed + 3001,
+            Frequency = detailFrequency * 0.35f,
+            FractalOctaves = 2,
+            FractalLacunarity = 2.0f,
+            FractalGain = 0.5f,
+            NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
+        };
+
+        float[,] heightMap = new float[mapSize, mapSize];
         Image heightImage = Image.CreateEmpty(mapSize, mapSize, false, Image.Format.Rgba8);
 
-        float highestPixel = 0.5f;
-
+        Random rng = new Random(seed);
+        float mountainAngle = (float)(rng.NextDouble() * Mathf.Pi);
 
         for (int y = 0; y < mapSize; y++)
         {
             for (int x = 0; x < mapSize; x++)
             {
-                float n1 = baseNoise.GetNoise2D(x, y);
+                float px = x / (float)(mapSize - 1);
+                float py = y / (float)(mapSize - 1);
 
-                n1 = (n1 + 1f) * 0.5f;
+                // 1) Base continents / land-sea
+                float n1 = (continentNoise.GetNoise2D(x, y) + 1f) * 0.5f;
 
-                float pixelXDistance = x / (float)(mapSize - 1);
-                float pixelYDistance = y / (float)(mapSize - 1);
+                float gradient = (px * orientation) + (py * (1f - orientation));
+                gradient = 1f - 1.2f * gradient * gradient + 0.5f * gradient * gradient * gradient;
 
-                float gradient = (pixelXDistance * orientation) + (pixelYDistance * (1f - orientation));
-                gradient = 1f - 1.2f * gradient * gradient + 0.5f * gradient * gradient * gradient; ;
-                float height = (n1 * 0.7f) + (gradient * 0.3f);
+                float continent = (n1 * 0.72f) + (gradient * 0.28f);
 
-                height *= height * height;
+                // Softer shaping than height^3
+                continent = Mathf.Pow(Mathf.Clamp(continent, 0f, 1f), 1.55f);
+
+                // 2) Inland mask - suppress mountains near coasts
+                float inlandMask = Smooth01(biomeLevel - 0.08f, biomeLevel + 0.08f, continent);
+
+                // 3) Broad mountain zones
+                float mountainZone = (mountainMaskNoise.GetNoise2D(x, y) + 1f) * 0.5f;
+                mountainZone = Smooth01(0.52f, 0.78f, mountainZone);
+
+                // 4) Warped, rotated, stretched coords for long mountain chains
+                float warpX = warpNoise.GetNoise2D(x + 137.2f, y - 84.7f) * 90f;
+                float warpY = warpNoise.GetNoise2D(x - 211.9f, y + 56.3f) * 90f;
+
+                float wx = x + warpX;
+                float wy = y + warpY;
+
+                Rotate(wx, wy, mountainAngle, out float rx, out float ry);
+
+                // Stretch one axis to make long ranges instead of round blobs
+                rx *= 0.35f;
+                ry *= 1.65f;
+
+                // 5) Ridged mountain detail
+                float ridge = RidgedFbm01(ridgeNoise, rx, ry, 5, 2.0f, 0.5f);
+
+                // Sharpen ridges so they form chains
+                ridge = Mathf.Pow(ridge, 2.4f);
+
+                // 6) Final mountain contribution
+                float mountainStrengthRaw = ridge * mountainZone * inlandMask;
+                float mountainStrength = Mathf.Pow(mountainStrengthRaw, 10.0f);
+                float height = continent + (mountainStrength * 0.50f);
+                height = SteepenUpperRange(height, biomeLevel, 2.3f);
+                height = SoftCap(height, 0.96f, 0.30f);
+
+                height = Mathf.Clamp(height, 0f, 1f);
 
                 height = Mathf.Clamp(height, 0f, 1f);
                 heightMap[x, y] = height;
-
-                if (highestPixel < height)
-                {
-                    highestPixel = height;
-                }
-
-
             }
         }
 
+        float minHeight = float.MaxValue;
+        float maxHeight = float.MinValue;
+
+        // Find min and max
+        for (int y = 0; y < mapSize; y++)
+        {
+            for (int x = 0; x < mapSize; x++)
+            {
+                float h = heightMap[x, y];
+
+                if (h < minHeight) minHeight = h;
+                if (h > maxHeight) maxHeight = h;
+            }
+        }
+
+        // Normalize to full 0..1 range
+        float range = Mathf.Max(maxHeight - minHeight, 0.0001f);
 
         for (int y = 0; y < mapSize; y++)
         {
             for (int x = 0; x < mapSize; x++)
             {
-                float scale = 1 / highestPixel;
-                heightMap[x, y] *= scale;
-                List<float> heightIncreaseScales = [0.1f, 0.3f, 0.5f, 0.65f];
-                foreach (var heightLevel in heightIncreaseScales)
-                {
-                    if (heightMap[x, y] >= heightLevel)
-                    {
-                        float fullHeightDiff = 1.0f - heightMap[x, y];
-                        float cutoffHeight = heightMap[x, y] - heightLevel;
-                        heightMap[x, y] += fullHeightDiff * cutoffHeight;
-                    }
-                }
-                heightMap[x, y] = ReduceBelowCutoff(1.0f, heightMap[x, y], 0.35f);
-                heightImage.SetPixel(x, y, PickTerrainColor(heightMap[x, y], seaLevel, coastThickness, biomeLevel, snowLevel));
+                heightMap[x, y] = (heightMap[x, y] - minHeight) / range;
+            }
+        }
+
+        for (int y = 0; y < mapSize; y++)
+        {
+            for (int x = 0; x < mapSize; x++)
+            {
+                heightImage.SetPixel(
+                    x,
+                    y,
+                    PickTerrainColor(heightMap[x, y], seaLevel, coastThickness, biomeLevel, snowLevel)
+                );
             }
         }
 
         ImageTexture heightTexture = ImageTexture.CreateFromImage(heightImage);
-
         return (heightMap, heightTexture);
     }
 
-    public static float ReduceBelowCutoff(float cutoff, float height, float minimum)
+    private static float SteepenUpperRange(float h, float startHeight, float steepness)
     {
-        if (cutoff <= 0.0 || cutoff > 1.0)
-            throw new ArgumentOutOfRangeException(nameof(cutoff), "cutoff must be > 0 and < 1.");
+        if (h <= startHeight)
+            return h;
 
-        if (height < 0.0 || height > 1.0)
-            throw new ArgumentOutOfRangeException(nameof(height), "height must be between 0 and 1.");
+        float t = (h - startHeight) / Mathf.Max(1f - startHeight, 0.0001f);
 
-        if (minimum < 0.0 || minimum >= cutoff)
-            throw new ArgumentOutOfRangeException(nameof(minimum), "minimum must be >= 0 and < cutoff.");
+        // Push mid-high values downward, leaving only the strongest peaks high
+        t = Mathf.Pow(t, steepness);
 
-        // Outside the affected range, leave unchanged
-        if (height <= minimum || height >= cutoff)
-            return height;
+        return startHeight + t * (1f - startHeight);
+    }
 
-        float range = cutoff - minimum;
-        float t = (height - minimum) / range;   // 0 = minimum, 1 = cutoff
+    private static float RidgedFbm01(
+        FastNoiseLite noise,
+        float x,
+        float y,
+        int octaves,
+        float lacunarity,
+        float gain)
+    {
+        float sum = 0f;
+        float amplitude = 1f;
+        float frequency = 1f;
+        float norm = 0f;
 
-        // SmoothStep helper
-        static float SmoothStep(float x) => (float)(x * x * (3.0 - 2.0 * x));
+        for (int i = 0; i < octaves; i++)
+        {
+            float n = noise.GetNoise2D(x * frequency, y * frequency); // [-1, 1]
+            float ridge = 1f - Mathf.Abs(n);                          // [0, 1]
+            ridge *= ridge;                                           // sharpen each octave a bit
 
-        // Soft shoulder near the cutoff, then steeper reduction below it.
-        // Peak effect is slightly below the cutoff, not exactly at it.
-        float reduction = (float)(SmoothStep(t * t) * Math.Sqrt(1.0 - t));
+            sum += ridge * amplitude;
+            norm += amplitude;
 
-        float adjustedT = t - reduction;
+            amplitude *= gain;
+            frequency *= lacunarity;
+        }
 
-        // Clamp to valid range just in case of floating-point edge cases
-        adjustedT = (float)Math.Max(0.0, Math.Min(1.0, adjustedT));
+        return norm > 0f ? sum / norm : 0f;
+    }
 
-        return minimum + adjustedT * range;
+    private static float Smooth01(float edge0, float edge1, float x)
+    {
+        float t = Mathf.Clamp((x - edge0) / Mathf.Max(edge1 - edge0, 0.0001f), 0f, 1f);
+        return t * t * (3f - 2f * t);
+    }
+
+    private static float SoftCap(float value, float start, float strength)
+    {
+        if (value <= start)
+            return value;
+
+        float excess = value - start;
+        return start + (excess / (1f + excess * strength));
+    }
+
+    private static void Rotate(float x, float y, float angle, out float rx, out float ry)
+    {
+        float c = Mathf.Cos(angle);
+        float s = Mathf.Sin(angle);
+
+        rx = x * c - y * s;
+        ry = x * s + y * c;
     }
 
     private static Color PickTerrainColor(float h, float seaLevel, float coastThickness, float biomeLevel, float snowLevel)

@@ -47,7 +47,6 @@ public partial class PauseMenu : ColorRect
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		GD.Print($"Pause menu Open: {_isOpen}");
 		if (_isOpen)
 		{
 			if (@event.IsActionPressed("toggle_menu"))

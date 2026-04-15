@@ -1,63 +1,139 @@
 [gd_scene format=3 uid="uid://bayuindod3qnk"]
 
 [ext_resource type="Script" uid="uid://hiq4xq85wsc" path="res://src/map-generation/MapPreview.cs" id="1_xyrje"]
+[ext_resource type="PackedScene" uid="uid://bhuni6vuvrx0b" path="res://scenes/map_preview_slider.tscn" id="2_d3m4o"]
 [ext_resource type="Theme" uid="uid://cc1yjmdreteje" path="res://menu_theme.tres" id="2_o31dl"]
-[ext_resource type="StyleBox" uid="uid://bof7v4snl76ei" path="res://StyleBox_World_Map_Details_Bar.tres" id="3_wn4pc"]
+[ext_resource type="Script" uid="uid://bvgcjh8iqixrf" path="res://src/map-generation/SliderContainer.cs" id="4_d3m4o"]
 
-[node name="MapPreview" type="Control" unique_id=382069952 node_paths=PackedStringArray("_mapPreview", "_mapDisplayMenu", "_mouseXPosLabel", "_mouseYPosLabel", "_heightLabel")]
+[node name="MapPreview" type="Control" unique_id=382069952 node_paths=PackedStringArray("_mapDisplayMenu", "_currentTileDetailsLabel", "_selectedTileDetailsLabel", "_mapIdLabel", "_reorderSliderContainer", "_mapPreviewContainer", "_cellMapPreview", "_heightMapPreview", "_testMapPreview", "_biomeMapPreview", "_temperatureMapPreview")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_xyrje")
-_mapPreview = NodePath("VBoxContainer/PanelContainer/TextureRect")
+_mapDisplayMenu = NodePath("HBoxContainer/VBoxContainer/PanelContainer2/MenuButton")
+_currentTileDetailsLabel = NodePath("HBoxContainer/VBoxContainer2/CurrentTileDetailsContainer/VBoxContainer/CurrentTileDetails")
+_selectedTileDetailsLabel = NodePath("HBoxContainer/VBoxContainer2/SelectedTileDetailsContainer/VBoxContainer/SelectedTileDetails")
+_mapIdLabel = NodePath("HBoxContainer/VBoxContainer2/MapIdContainer/MapIdLabel")
+_reorderSliderContainer = NodePath("HBoxContainer/VBoxContainer2/ReorderSliderContainer/MarginContainer/SliderContainer")
+_mapPreviewContainer = NodePath("HBoxContainer/VBoxContainer/MapPreviewContainer")
+_reorderSliderScene = ExtResource("2_d3m4o")
+_cellMapPreview = NodePath("HBoxContainer/VBoxContainer/MapPreviewContainer/CellNoiseTexture")
+_heightMapPreview = NodePath("HBoxContainer/VBoxContainer/MapPreviewContainer/HeightMapTexture")
+_testMapPreview = NodePath("HBoxContainer/VBoxContainer/MapPreviewContainer/TestMapTexture")
+_biomeMapPreview = NodePath("HBoxContainer/VBoxContainer/MapPreviewContainer/BiomeMapTexture")
+_temperatureMapPreview = NodePath("HBoxContainer/VBoxContainer/MapPreviewContainer/TemperatureMapTexture")
 _mapSize = 1024
 _seed = 346345
 _cellCount = 128
-_mapDisplayMenu = NodePath("VBoxContainer/PanelContainer2/MenuButton")
-_mouseXPosLabel = NodePath("VBoxContainer/PanelContainer/Panel/HBoxContainer/mouseXPos")
-_mouseYPosLabel = NodePath("VBoxContainer/PanelContainer/Panel/HBoxContainer/mouseYPos")
-_heightLabel = NodePath("VBoxContainer/PanelContainer/Panel/HBoxContainer/height")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1524414792]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=759696007]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer" unique_id=1741690108]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1524414792]
 layout_mode = 2
 
-[node name="MenuButton" type="MenuButton" parent="VBoxContainer/PanelContainer2" unique_id=1839334355]
+[node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer/VBoxContainer" unique_id=1741690108]
+layout_mode = 2
+
+[node name="MenuButton" type="MenuButton" parent="HBoxContainer/VBoxContainer/PanelContainer2" unique_id=1839334355]
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("2_o31dl")
 toggle_mode = false
 text = "Map Select"
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=1042655073]
+[node name="MapPreviewContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer" unique_id=1042655073]
 custom_minimum_size = Vector2(1028, 1028)
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer" unique_id=327600735]
+[node name="CellNoiseTexture" type="TextureRect" parent="HBoxContainer/VBoxContainer/MapPreviewContainer" unique_id=327600735]
 texture_filter = 1
 custom_minimum_size = Vector2(1024, 1024)
 layout_mode = 2
 stretch_mode = 5
 
-[node name="Panel" type="PanelContainer" parent="VBoxContainer/PanelContainer" unique_id=1351063951]
+[node name="HeightMapTexture" type="TextureRect" parent="HBoxContainer/VBoxContainer/MapPreviewContainer" unique_id=1924227252]
+texture_filter = 1
+custom_minimum_size = Vector2(1024, 1024)
 layout_mode = 2
-size_flags_vertical = 0
-theme_override_styles/panel = ExtResource("3_wn4pc")
+stretch_mode = 5
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/Panel" unique_id=231395836]
+[node name="BiomeMapTexture" type="TextureRect" parent="HBoxContainer/VBoxContainer/MapPreviewContainer" unique_id=1934955975]
+texture_filter = 1
+custom_minimum_size = Vector2(1024, 1024)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="TemperatureMapTexture" type="TextureRect" parent="HBoxContainer/VBoxContainer/MapPreviewContainer" unique_id=809614812]
+texture_filter = 1
+custom_minimum_size = Vector2(1024, 1024)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="TestMapTexture" type="TextureRect" parent="HBoxContainer/VBoxContainer/MapPreviewContainer" unique_id=702709325]
+texture_filter = 1
+custom_minimum_size = Vector2(1024, 1024)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer" unique_id=1481606450]
+layout_mode = 2
+
+[node name="MapIdContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2" unique_id=889959929]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="MapIdLabel" type="Label" parent="HBoxContainer/VBoxContainer2/MapIdContainer" unique_id=986615912]
+layout_mode = 2
+
+[node name="SelectedTileDetailsContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2" unique_id=1153294165]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/SelectedTileDetailsContainer" unique_id=1471049639]
+layout_mode = 2
+
+[node name="SelectedDetailsTitleLabel" type="Label" parent="HBoxContainer/VBoxContainer2/SelectedTileDetailsContainer/VBoxContainer" unique_id=850456841]
+layout_mode = 2
+text = "Selected Tile Details"
+
+[node name="SelectedTileDetails" type="Label" parent="HBoxContainer/VBoxContainer2/SelectedTileDetailsContainer/VBoxContainer" unique_id=617180390]
+layout_mode = 2
+
+[node name="CurrentTileDetailsContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2" unique_id=496091056]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/CurrentTileDetailsContainer" unique_id=104525267]
+layout_mode = 2
+
+[node name="CurrentDetailsTitleLabel" type="Label" parent="HBoxContainer/VBoxContainer2/CurrentTileDetailsContainer/VBoxContainer" unique_id=651193158]
+layout_mode = 2
+text = "Current Tile Details"
+
+[node name="CurrentTileDetails" type="Label" parent="HBoxContainer/VBoxContainer2/CurrentTileDetailsContainer/VBoxContainer" unique_id=1728372610]
+layout_mode = 2
+
+[node name="ReorderSliderContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2" unique_id=1734528508]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/VBoxContainer2/ReorderSliderContainer" unique_id=1283010734]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="SliderContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/ReorderSliderContainer/MarginContainer" unique_id=349207186]
 layout_mode = 2
 theme_override_constants/separation = 8
-
-[node name="mouseXPos" type="Label" parent="VBoxContainer/PanelContainer/Panel/HBoxContainer" unique_id=44165439]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="mouseYPos" type="Label" parent="VBoxContainer/PanelContainer/Panel/HBoxContainer" unique_id=1432035666]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="height" type="Label" parent="VBoxContainer/PanelContainer/Panel/HBoxContainer" unique_id=1728372610]
-layout_mode = 2
+script = ExtResource("4_d3m4o")

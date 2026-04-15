@@ -1,16 +1,24 @@
 using System;
-using System.Linq.Expressions;
 using Godot;
+using Vector2 = Godot.Vector2;
 
 public partial class MapPreview : Control
 {
 	[Export] private MenuButton _mapDisplayMenu;
-	[Export] private Label _mouseXPosLabel;
-	[Export] private Label _mouseYPosLabel;
-	[Export] private Label _heightLabel;
+	[Export] private Label _currentTileDetailsLabel;
+	[Export] private Label _selectedTileDetailsLabel;
+	[Export] private Label _mapIdLabel;
+	[Export] private SliderContainer _reorderSliderContainer;
+	[Export] private PanelContainer _mapPreviewContainer;
+	[Export] private PackedScene _reorderSliderScene;
+	[Export] private TextureRect _cellMapPreview;
+	[Export] private TextureRect _heightMapPreview;
+	[Export] private TextureRect _testMapPreview;
+	[Export] private TextureRect _biomeMapPreview;
+	[Export] private TextureRect _temperatureMapPreview;
+
 
 	[ExportGroup("Map Settings")]
-	[Export] private TextureRect _mapPreview;
 	[Export] private int _mapSize;
 	[Export] private int _seed = 12345;
 	[Export] private int _cellCount;
@@ -23,6 +31,8 @@ public partial class MapPreview : Control
 	[Export] private float _baseFrequency = 0.008f;
 	[Export] private float _detailFrequency = 0.025f;
 
+
+	private Vector2 _selectedTileLocation = Vector2.Zero;
 
 	private float _orientation;
 	private CellNoiseHelper.CellMapData _cellMap;
@@ -48,8 +58,20 @@ public partial class MapPreview : Control
 		Cell,
 		Biome
 	}
-	private string _currentMapType;
+	private string _currentMapType = "Test";
 
+	private MapPreviewDetails[] _mapDetailsForSliders;
+	public class MapPreviewDetails
+	{
+		public string Id { get; set; }
+		public TextureRect LinkedMapPreview { get; set; }
+
+		public MapPreviewDetails(string id, TextureRect linkedMapPreview)
+		{
+			Id = id;
+			LinkedMapPreview = linkedMapPreview;
+		}
+	}
 
 	public override void _Ready()
 	{
@@ -64,18 +86,24 @@ public partial class MapPreview : Control
 			_mapDisplayPopupMenu.AddItem(mapType.ToString(), (int)mapType);
 		}
 
-		_mapDisplayPopupMenu.IdPressed += OnMapDisplayMenuChoice;
+		if (_mapDisplayPopupMenu != null)
+			_mapDisplayPopupMenu.IdPressed += OnMapDisplayMenuChoice;
+
+		if (_testMapPreview != null)
+			_testMapPreview.GuiInput += OnMapGuiInput;
 
 		(_heightMap, _heightTexture) = HeightMap.GenerateHeightMap(
 			_mapSize,
 			_seed,
 			_baseFrequency,
 			_detailFrequency,
+			_orientation,
 			_seaLevel,
 			_coastThickness,
 			_biomeLevel,
 			_snowLevel
 		);
+		_heightMapPreview.Texture = _heightTexture;
 
 		(_testMap, _testTexture) = TestMap.GenerateHeightMap(
 			_mapSize,
@@ -88,6 +116,8 @@ public partial class MapPreview : Control
 			_biomeLevel,
 			_snowLevel
 		);
+		_testMapPreview.Texture = _testTexture;
+
 
 		(_temperatureMap, _temperatureTexture) = TemperatureMap.GenerateTemperatureMap(
 			_mapSize,
@@ -101,6 +131,8 @@ public partial class MapPreview : Control
 			_biomeLevel,
 			_snowLevel
 		);
+		_temperatureMapPreview.Texture = _temperatureTexture;
+
 
 		(_cellMap, _cellTexture) = CellNoiseHelper.GenerateCellMapAndTexture(
 			_mapSize,
@@ -108,6 +140,8 @@ public partial class MapPreview : Control
 			_cellCount,
 			_seed
 		);
+		_cellMapPreview.Texture = _cellTexture;
+
 
 		long biomeSeed = _seed ^ 0x9E3779B9;
 
@@ -115,6 +149,16 @@ public partial class MapPreview : Control
 			_cellMap,
 			(int)biomeSeed
 		);
+		_biomeMapPreview.Texture = _biomeTexture;
+
+		_mapDetailsForSliders =
+		[
+			new MapPreviewDetails("Test", _testMapPreview),
+			new MapPreviewDetails("Height", _heightMapPreview),
+			new MapPreviewDetails("Cell", _cellMapPreview),
+			new MapPreviewDetails("Biome", _biomeMapPreview),
+			new MapPreviewDetails("Temperature", _temperatureMapPreview),
+		];
 
 		foreach (var pair in _biomeResult.CellBiomes)
 		{
@@ -127,27 +171,89 @@ public partial class MapPreview : Control
 
 		OnMapDisplayMenuChoice(0);
 
-		_mouseXPosLabel.Text = "X:0";
-		_mouseYPosLabel.Text = "Y:0";
+		AddReorderSliders(_mapDetailsForSliders);
 
+		if (_reorderSliderContainer != null)
+			_reorderSliderContainer.SliderReordered += OnSliderReordered;
+
+		GetTileDetailsString(new Vector2(0f, 0f), _selectedTileDetailsLabel);
+		GetTileDetailsString(new Vector2(0f, 0f), _currentTileDetailsLabel);
+
+	}
+
+	private void OnMapGuiInput(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton mb &&
+			mb.ButtonIndex == MouseButton.Left &&
+			mb.Pressed)
+		{
+			_selectedTileLocation = _testMapPreview.GetLocalMousePosition();
+			GetTileDetailsString(_selectedTileLocation, _selectedTileDetailsLabel);
+		}
+	}
+
+	private void AddReorderSliders(MapPreviewDetails[] mapPreviewDetails)
+	{
+		int numOfSliders = Enum.GetNames(typeof(MapTypes)).Length;
+		_reorderSliderContainer.Size = new Vector2(_reorderSliderContainer.GetParent<MarginContainer>().Size.X, numOfSliders * 20);
+
+		foreach (var item in mapPreviewDetails)
+		{
+			var slider = _reorderSliderScene.Instantiate<MapPreviewSlider>();
+			slider.SetSliderData(item.Id, _reorderSliderContainer.Size.X, item.LinkedMapPreview);
+			_reorderSliderContainer.AddChild(slider);
+		}
+	}
+
+	private void OnSliderReordered(MapPreviewSlider slider, int newIndex)
+	{
+		if (slider.LinkedMapPreview == null)
+			return;
+
+		_mapPreviewContainer.MoveChild(slider.LinkedMapPreview, newIndex);
 	}
 
 	public override void _Process(double delta)
 	{
-		// Mouse position relative to the target control
-		Vector2 localMousePos = _mapPreview.GetLocalMousePosition();
-		int lmX = (int)localMousePos.X;
-		int lmY = (int)localMousePos.Y;
+		GetTileDetailsString(_testMapPreview.GetLocalMousePosition(), _currentTileDetailsLabel);
+	}
 
-		// The control's local bounds
-		Rect2 bounds = new Rect2(Vector2.Zero, _mapPreview.Size);
+	private void GetTileDetailsString(Vector2 pos, Label labelToUpdate)
+	{
+		Rect2 bounds = new Rect2(Vector2.Zero, _testMapPreview.Size);
 
-		if (bounds.HasPoint(localMousePos))
+		if (!bounds.HasPoint(pos))
 		{
-			_mouseXPosLabel.Text = $"X:{lmX}";
-			_mouseYPosLabel.Text = $"Y:{lmY}";
-			_heightLabel.Text = $"{_currentMapType}:{_currentMap[lmX, lmY]}";
+			return;
 		}
+
+		if (_testMapPreview.Size.X <= 0 || _testMapPreview.Size.Y <= 0)
+			return;
+
+		// Convert from TextureRect space to map array space
+		int mapX = Mathf.Clamp(
+			Mathf.FloorToInt(pos.X / _testMapPreview.Size.X * _biomeResult.CellMap.Width),
+			0,
+			_biomeResult.CellMap.Width - 1
+		);
+
+		int mapY = Mathf.Clamp(
+			Mathf.FloorToInt(pos.Y / _testMapPreview.Size.Y * _biomeResult.CellMap.Height),
+			0,
+			_biomeResult.CellMap.Height - 1
+		);
+
+		int cellId = _biomeResult.CellMap.CellIdMap[mapX, mapY];
+		BiomeRulesHelper.BiomeType biomeType = _biomeResult.CellBiomes[cellId];
+
+		string result =
+			$"\n" +
+			$"Y: {mapY}\n" +
+			$"X: {mapX}\n\n" +
+			$"Cell ID: {cellId}\n\n" +
+			$"Biome: {biomeType}";
+
+		labelToUpdate.Text = result;
 	}
 
 	private void OnMapDisplayMenuChoice(long id)
@@ -155,33 +261,33 @@ public partial class MapPreview : Control
 		switch ((int)id)
 		{
 			case (int)MapTypes.Height:
+				_mapIdLabel.Text = "Height";
 				_currentMapType = "Height";
-				_mapPreview.Texture = _heightTexture;
 				_currentMap = _heightMap;
 				break;
 			case (int)MapTypes.Temperature:
+				_mapIdLabel.Text = "Temperature";
 				_currentMapType = "Temperature";
-				_mapPreview.Texture = _temperatureTexture;
 				_currentMap = _temperatureMap;
 				break;
 			case (int)MapTypes.Climate:
+				_mapIdLabel.Text = "Cliamte";
 				_currentMapType = "Climate";
-				_mapPreview.Texture = _climateTexture;
-				_currentMap = _climateMap;
+				// _currentMap = _climateMap;
 				break;
 			case (int)MapTypes.Test:
+				_mapIdLabel.Text = "Test";
 				_currentMapType = "Test";
-				_mapPreview.Texture = _testTexture;
 				_currentMap = _testMap;
 				break;
 			case (int)MapTypes.Cell:
+				_mapIdLabel.Text = "Cell";
 				_currentMapType = "Cell";
-				_mapPreview.Texture = _cellTexture;
 				// _currentMap = new float[,];
 				break;
 			case (int)MapTypes.Biome:
+				_mapIdLabel.Text = "Biome";
 				_currentMapType = "Biome";
-				_mapPreview.Texture = _biomeTexture;
 				// _currentMap = new float[,];
 				break;
 		}

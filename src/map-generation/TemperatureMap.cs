@@ -37,7 +37,7 @@ public partial class TemperatureMap
         float seaCoolingStrength = 0.2f;            // how much cooler the ocean itself is
         float inlandWarmingStrength = 0.035f;       // slight continental warming inland
         float elevationCoolingStrength = 0.08f;     // general cooling with altitude
-        float mountainCoolingStrength = 0.1f;       // extra high-mountain cooling
+        float mountainCoolingStrength = 0.2f;       // extra high-mountain cooling
         float noiseAmount = 0.08f;                  // temperature noise
 
         float minTemp = float.MaxValue;
