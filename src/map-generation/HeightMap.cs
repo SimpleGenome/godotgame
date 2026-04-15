@@ -4,11 +4,15 @@ public partial class HeightMap
 {
 	// to drive real gameplay terrain.
 	public static (float[,], ImageTexture) GenerateHeightMap(
-        int mapSize, 
-        int seed, 
-        float baseFrequency, 
-        float detailFrequency
-    )
+		int mapSize,
+		int seed,
+		float baseFrequency,
+		float detailFrequency,
+		float seaLevel,
+		float coastThickness,
+		float biomeLevel,
+		float snowLevel
+	)
 	{
 		// Big shapes
 		var baseNoise = new FastNoiseLite
@@ -32,7 +36,7 @@ public partial class HeightMap
 			FractalGain = 0.5f
 		};
 
-		float [,] heightMap = new float[mapSize, mapSize];
+		float[,] heightMap = new float[mapSize, mapSize];
 
 		Image heightImage = Image.CreateEmpty(mapSize, mapSize, false, Image.Format.Rgba8);
 
@@ -74,10 +78,10 @@ public partial class HeightMap
 				heightImage.SetPixel(x, y, PickTerrainColor(height));
 			}
 		}
-        
+
 		ImageTexture heightTexture = ImageTexture.CreateFromImage(heightImage);
 
-        return (heightMap, heightTexture);
+		return (heightMap, heightTexture);
 	}
 
 	private static Color PickTerrainColor(float h)

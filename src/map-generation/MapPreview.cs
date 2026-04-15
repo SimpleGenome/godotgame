@@ -4,18 +4,26 @@ using Godot;
 
 public partial class MapPreview : Control
 {
+	[Export] private MenuButton _mapDisplayMenu;
+	[Export] private Label _mouseXPosLabel;
+	[Export] private Label _mouseYPosLabel;
+	[Export] private Label _heightLabel;
+
+	[ExportGroup("Map Settings")]
 	[Export] private TextureRect _mapPreview;
 	[Export] private int _mapSize;
 	[Export] private int _seed = 12345;
 	[Export] private int _cellCount;
 
+	[ExportSubgroup("Base Height Levels")]
+	[Export] private float _seaLevel = 0.5f;
+	[Export] private float _coastThickness = 0.02f;
+	[Export] private float _biomeLevel = 0.72f;
+	[Export] private float _snowLevel = 0.89f;
 	[Export] private float _baseFrequency = 0.008f;
 	[Export] private float _detailFrequency = 0.025f;
 
-	[Export] private MenuButton _mapDisplayMenu;
-	[Export] private Label _mouseXPosLabel;
-	[Export] private Label _mouseYPosLabel;
-	[Export] private Label _heightLabel;
+
 	private float _orientation;
 	private CellNoiseHelper.CellMapData _cellMap;
 	private Texture2D _cellTexture;
@@ -62,7 +70,11 @@ public partial class MapPreview : Control
 			_mapSize,
 			_seed,
 			_baseFrequency,
-			_detailFrequency
+			_detailFrequency,
+			_seaLevel,
+			_coastThickness,
+			_biomeLevel,
+			_snowLevel
 		);
 
 		(_testMap, _testTexture) = TestMap.GenerateHeightMap(
@@ -70,7 +82,11 @@ public partial class MapPreview : Control
 			_seed,
 			_baseFrequency,
 			_detailFrequency,
-			_orientation
+			_orientation,
+			_seaLevel,
+			_coastThickness,
+			_biomeLevel,
+			_snowLevel
 		);
 
 		(_temperatureMap, _temperatureTexture) = TemperatureMap.GenerateTemperatureMap(
@@ -79,7 +95,11 @@ public partial class MapPreview : Control
 			_baseFrequency,
 			_detailFrequency,
 			_orientation,
-			_testMap
+			_testMap,
+			_seaLevel,
+			_coastThickness,
+			_biomeLevel,
+			_snowLevel
 		);
 
 		(_cellMap, _cellTexture) = CellNoiseHelper.GenerateCellMapAndTexture(

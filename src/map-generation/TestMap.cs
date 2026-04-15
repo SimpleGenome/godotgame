@@ -11,7 +11,11 @@ public partial class TestMap
         int seed,
         float baseFrequency,
         float detailFrequency,
-        float orientation
+        float orientation,
+        float seaLevel,
+        float coastThickness,
+        float biomeLevel,
+        float snowLevel
     )
     {
         var baseNoise = new FastNoiseLite
@@ -45,9 +49,9 @@ public partial class TestMap
                 float pixelYDistance = y / (float)(mapSize - 1);
 
                 float gradient = (pixelXDistance * orientation) + (pixelYDistance * (1f - orientation));
-                gradient = 1f - 1.2f * gradient * gradient + 0.5f * gradient * gradient * gradient;;
+                gradient = 1f - 1.2f * gradient * gradient + 0.5f * gradient * gradient * gradient; ;
                 float height = (n1 * 0.7f) + (gradient * 0.3f);
-                
+
                 height *= height * height;
 
                 height = Mathf.Clamp(height, 0f, 1f);
@@ -80,7 +84,7 @@ public partial class TestMap
                     }
                 }
                 heightMap[x, y] = ReduceBelowCutoff(1.0f, heightMap[x, y], 0.35f);
-                heightImage.SetPixel(x, y, PickTerrainColor(heightMap[x, y]));
+                heightImage.SetPixel(x, y, PickTerrainColor(heightMap[x, y], seaLevel, coastThickness, biomeLevel, snowLevel));
             }
         }
 
@@ -122,18 +126,16 @@ public partial class TestMap
         return minimum + adjustedT * range;
     }
 
-    private static Color PickTerrainColor(float h)
+    private static Color PickTerrainColor(float h, float seaLevel, float coastThickness, float biomeLevel, float snowLevel)
     {
-        if (h < 0.5f)
+        if (h < seaLevel)
             return new Color(0.1f + (h * 0.5f), 0.2f + (h * 0.6f), 0.8f);
-        if (h < 0.52f)
+        if (h < seaLevel + coastThickness)
             return new Color(0.7f + (h * 0.25f), 0.60f + (h * 0.4f), 0.45f + (h * 0.25f));
-        if (h < 0.72f)
+        if (h < biomeLevel)
             return new Color(0.15f + (h * 0.15f), 0.30f + (h * 0.2f), 0.15f + (h * 0.15f));
-        if (h < 0.89f)
+        if (h < snowLevel)
             return new Color(h - 0.2f, h - 0.2f, h - 0.2f);
-
         return new Color(h, h, h);
-
     }
 }
