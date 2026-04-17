@@ -7,7 +7,6 @@ public partial class TemperatureMap
         int mapSize,
         int seed,
         float baseFrequency,
-        float detailFrequency,
         float orientation,
         float[,] heightMap,
         float seaLevel,
@@ -34,7 +33,7 @@ public partial class TemperatureMap
 
         // Tune these
         float maritimeRange = mapSize * 0.05f;      // how far ocean influence reaches inland
-        float seaCoolingStrength = 0.2f;            // how much cooler the ocean itself is
+        float seaCoolingStrength = 0.25f;            // how much cooler the ocean itself is
         float inlandWarmingStrength = 0.035f;       // slight continental warming inland
         float elevationCoolingStrength = 0.08f;     // general cooling with altitude
         float mountainCoolingStrength = 0.2f;       // extra high-mountain cooling

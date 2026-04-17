@@ -4,7 +4,6 @@ using Vector2 = Godot.Vector2;
 
 public partial class MapPreview : Control
 {
-	[Export] private MenuButton _mapDisplayMenu;
 	[Export] private Label _currentTileDetailsLabel;
 	[Export] private Label _selectedTileDetailsLabel;
 	[Export] private Label _mapIdLabel;
@@ -16,6 +15,11 @@ public partial class MapPreview : Control
 	[Export] private TextureRect _testMapPreview;
 	[Export] private TextureRect _biomeMapPreview;
 	[Export] private TextureRect _temperatureMapPreview;
+	[Export] private TextureRect _gradientMagMapPreview;
+	[Export] private TextureRect _gradientDirMapPreview;
+	[Export] private TextureRect _humidityMapPreview;
+
+
 
 
 	[ExportGroup("Map Settings")]
@@ -33,12 +37,10 @@ public partial class MapPreview : Control
 
 
 	private Vector2 _selectedTileLocation = Vector2.Zero;
-
-	private float _orientation;
+	private Vector2 _windDirection;
 	private CellNoiseHelper.CellMapData _cellMap;
 	private Texture2D _cellTexture;
 	private CellBiomeWfcHelper.BiomeCellResult _biomeResult;
-	private float[,] _currentMap;
 	private Texture2D _biomeTexture;
 	private float[,] _heightMap;
 	private Texture2D _heightTexture;
@@ -46,8 +48,14 @@ public partial class MapPreview : Control
 	private Texture2D _temperatureTexture;
 	private float[,] _climateMap;
 	private Texture2D _climateTexture;
+	private float[,] _humidityMap;
+	private Texture2D _humidityTexture;
 	private float[,] _testMap;
 	private Texture2D _testTexture;
+	private (float dx, float dy)[,] _gradientDirMap;
+	private Texture2D _gradientDirTexture;
+	private float[,] _gradientMagMap;
+	private Texture2D _gradientMagTexture;
 	private PopupMenu _mapDisplayPopupMenu;
 	private enum MapTypes
 	{
@@ -56,7 +64,9 @@ public partial class MapPreview : Control
 		Temperature,
 		Climate,
 		Cell,
-		Biome
+		Biome,
+		GradientMag,
+		GradientDir
 	}
 	private string _currentMapType = "Test";
 
@@ -76,28 +86,19 @@ public partial class MapPreview : Control
 	public override void _Ready()
 	{
 		MapGenTools.InitRandom(_seed);
-		_orientation = MapGenTools.NextRandomFloat();
-		GD.Print("Orientation: " + _orientation);
+		float heightOrientation = MapGenTools.NextRandomFloat();
+		float temperatureOrientation = MapGenTools.NextRandomFloat();
+		_windDirection = new Vector2(MapGenTools.NextRandomFloat(), MapGenTools.NextRandomFloat());
+		GD.Print("Height Orientation: " + heightOrientation);
+		GD.Print("Temperature Orientation: " + temperatureOrientation);
 
-		_mapDisplayPopupMenu = _mapDisplayMenu.GetPopup();
-
-		foreach (MapTypes mapType in Enum.GetValues<MapTypes>())
-		{
-			_mapDisplayPopupMenu.AddItem(mapType.ToString(), (int)mapType);
-		}
-
-		if (_mapDisplayPopupMenu != null)
-			_mapDisplayPopupMenu.IdPressed += OnMapDisplayMenuChoice;
-
-		if (_testMapPreview != null)
-			_testMapPreview.GuiInput += OnMapGuiInput;
 
 		(_heightMap, _heightTexture) = HeightMap.GenerateHeightMap(
 			_mapSize,
 			_seed,
 			_baseFrequency,
 			_detailFrequency,
-			_orientation,
+			heightOrientation,
 			_seaLevel,
 			_coastThickness,
 			_biomeLevel,
@@ -110,7 +111,7 @@ public partial class MapPreview : Control
 			_seed,
 			_baseFrequency,
 			_detailFrequency,
-			_orientation,
+			temperatureOrientation,
 			_seaLevel,
 			_coastThickness,
 			_biomeLevel,
@@ -118,20 +119,40 @@ public partial class MapPreview : Control
 		);
 		_testMapPreview.Texture = _testTexture;
 
+		(_gradientMagMap, _gradientMagTexture) = HeightMap.GenerateGradientMagnitudeMap(_heightMap);
+		_gradientMagMapPreview.Texture = _gradientMagTexture;
+
+		(_gradientDirMap, _gradientDirTexture) = HeightMap.GenerateGradientDirectionMap(_heightMap);
+		_gradientDirMapPreview.Texture = _gradientDirTexture;
+
 
 		(_temperatureMap, _temperatureTexture) = TemperatureMap.GenerateTemperatureMap(
 			_mapSize,
 			_seed,
 			_baseFrequency,
-			_detailFrequency,
-			_orientation,
-			_testMap,
+			heightOrientation,
+			_heightMap,
 			_seaLevel,
 			_coastThickness,
 			_biomeLevel,
 			_snowLevel
 		);
 		_temperatureMapPreview.Texture = _temperatureTexture;
+
+		(_humidityMap, _humidityTexture) = HumidityMap.GenerateHumidityMap(
+			_mapSize,
+			_seed,
+			_baseFrequency,
+			_windDirection,
+			_heightMap,
+			_temperatureMap,
+			_seaLevel,
+			_coastThickness,
+			_biomeLevel,
+			_snowLevel
+		);
+		_humidityMapPreview.Texture = _humidityTexture;
+
 
 
 		(_cellMap, _cellTexture) = CellNoiseHelper.GenerateCellMapAndTexture(
@@ -147,7 +168,10 @@ public partial class MapPreview : Control
 
 		(_biomeResult, _biomeTexture) = CellBiomeWfcHelper.GenerateBiomesAndTexture(
 			_cellMap,
-			(int)biomeSeed
+			(int)biomeSeed,
+			_heightMap,
+			_temperatureMap,
+			_seaLevel
 		);
 		_biomeMapPreview.Texture = _biomeTexture;
 
@@ -158,26 +182,23 @@ public partial class MapPreview : Control
 			new MapPreviewDetails("Cell", _cellMapPreview),
 			new MapPreviewDetails("Biome", _biomeMapPreview),
 			new MapPreviewDetails("Temperature", _temperatureMapPreview),
+			new MapPreviewDetails("GradientMag", _gradientMagMapPreview),
+			new MapPreviewDetails("GradientDir", _gradientDirMapPreview),
+			new MapPreviewDetails("humidity", _humidityMapPreview),
 		];
-
-		foreach (var pair in _biomeResult.CellBiomes)
-		{
-			int cellId = pair.Key;
-			BiomeRulesHelper.BiomeType biome = pair.Value;
-			// GD.Print($"Cell {cellId} => {biome}");
-		}
 
 		GD.Print($"Generated {_cellMap.Cells.Count} cells");
 
-		OnMapDisplayMenuChoice(0);
-
 		AddReorderSliders(_mapDetailsForSliders);
+
+		if (_testMapPreview != null)
+			_testMapPreview.GuiInput += OnMapGuiInput;
 
 		if (_reorderSliderContainer != null)
 			_reorderSliderContainer.SliderReordered += OnSliderReordered;
 
-		GetTileDetailsString(new Vector2(0f, 0f), _selectedTileDetailsLabel);
-		GetTileDetailsString(new Vector2(0f, 0f), _currentTileDetailsLabel);
+		SetTileDetailsString(new Vector2(0f, 0f), _selectedTileDetailsLabel);
+		SetTileDetailsString(new Vector2(0f, 0f), _currentTileDetailsLabel);
 
 	}
 
@@ -188,7 +209,7 @@ public partial class MapPreview : Control
 			mb.Pressed)
 		{
 			_selectedTileLocation = _testMapPreview.GetLocalMousePosition();
-			GetTileDetailsString(_selectedTileLocation, _selectedTileDetailsLabel);
+			SetTileDetailsString(_selectedTileLocation, _selectedTileDetailsLabel);
 		}
 	}
 
@@ -215,10 +236,10 @@ public partial class MapPreview : Control
 
 	public override void _Process(double delta)
 	{
-		GetTileDetailsString(_testMapPreview.GetLocalMousePosition(), _currentTileDetailsLabel);
+		SetTileDetailsString(_testMapPreview.GetLocalMousePosition(), _currentTileDetailsLabel);
 	}
 
-	private void GetTileDetailsString(Vector2 pos, Label labelToUpdate)
+	private void SetTileDetailsString(Vector2 pos, Label labelToUpdate)
 	{
 		Rect2 bounds = new Rect2(Vector2.Zero, _testMapPreview.Size);
 
@@ -246,54 +267,28 @@ public partial class MapPreview : Control
 		int cellId = _biomeResult.CellMap.CellIdMap[mapX, mapY];
 		BiomeRulesHelper.BiomeType biomeType = _biomeResult.CellBiomes[cellId];
 
+		// y =24tan(2.27x - 1.3)+19
+		// y =5tan(2.95x - 1.51)+15
+		float temperature = _temperatureMap[mapX, mapY];
+		float temperatureDegrees = 5 * (float)Math.Tan(2.95 * temperature - 1.51) + 15;
+		float altitude = _heightMap[mapX, mapY];
+		float humidity = _humidityMap[mapX, mapY];
+		float gradientMag = _gradientMagMap[mapX, mapY];
+		(float dx, float dy) gradientDir = _gradientDirMap[mapX, mapY];
+
 		string result =
 			$"\n" +
 			$"Y: {mapY}\n" +
 			$"X: {mapX}\n\n" +
 			$"Cell ID: {cellId}\n\n" +
-			$"Biome: {biomeType}";
+			$"Cell Count: {_cellMap.Cells.Count}\n" +
+			$"Biome: {biomeType}\n\n" +
+			$"Temperature: {temperatureDegrees}\n" +
+			$"Altitude: {altitude}\n" +
+			$"Humidity: {humidity}\n" +
+			$"Gradient Magnitude: {gradientMag}\n" +
+			$"Gradient Direction: dx:{gradientDir.dx} dy:{gradientDir.dy}\n";
 
 		labelToUpdate.Text = result;
-	}
-
-	private void OnMapDisplayMenuChoice(long id)
-	{
-		switch ((int)id)
-		{
-			case (int)MapTypes.Height:
-				_mapIdLabel.Text = "Height";
-				_currentMapType = "Height";
-				_currentMap = _heightMap;
-				break;
-			case (int)MapTypes.Temperature:
-				_mapIdLabel.Text = "Temperature";
-				_currentMapType = "Temperature";
-				_currentMap = _temperatureMap;
-				break;
-			case (int)MapTypes.Climate:
-				_mapIdLabel.Text = "Cliamte";
-				_currentMapType = "Climate";
-				// _currentMap = _climateMap;
-				break;
-			case (int)MapTypes.Test:
-				_mapIdLabel.Text = "Test";
-				_currentMapType = "Test";
-				_currentMap = _testMap;
-				break;
-			case (int)MapTypes.Cell:
-				_mapIdLabel.Text = "Cell";
-				_currentMapType = "Cell";
-				// _currentMap = new float[,];
-				break;
-			case (int)MapTypes.Biome:
-				_mapIdLabel.Text = "Biome";
-				_currentMapType = "Biome";
-				// _currentMap = new float[,];
-				break;
-		}
-
-		GD.Print($"{_currentMapType} Map Selected");
-
-		return;
 	}
 }

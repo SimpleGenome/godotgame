@@ -14,7 +14,11 @@ public static class CellBiomeWfcHelper
 
     public static (BiomeCellResult biomeResult, ImageTexture biomeTexture) GenerateBiomesAndTexture(
         CellNoiseHelper.CellMapData cellMap,
-        int seed)
+        int seed,
+        float[,] HeightMap,
+        float [,] TemperatureMap,
+        float seaLevel
+    )
     {
         Dictionary<BiomeRulesHelper.BiomeType, BiomeRulesHelper.BiomeDefinition> biomeDefs =
             BiomeRulesHelper.CreateBiomeDefinitions();

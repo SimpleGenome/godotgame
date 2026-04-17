@@ -7,6 +7,8 @@ public partial class MapPreviewSlider : PanelContainer
 	[Export] private HSlider _slider;
 	[Export] private Button _dragHandle;
 	[Export] private Button _visibleButton;
+	[Export] private Texture2D _notVisibleIcon;
+	[Export] private Texture2D _visibleIcon;
 
 	private string _sliderId;
 	private TextureRect _linkedMapPreview;
@@ -37,9 +39,22 @@ public partial class MapPreviewSlider : PanelContainer
 	private void OnVisibleButtonPressed()
 	{
 		if (_linkedMapPreview == null)
+		{
 			return;
-
-		_linkedMapPreview.Visible = !_linkedMapPreview.Visible;
+		}
+		else
+		{
+			if (_linkedMapPreview.Visible == true)
+			{
+				_linkedMapPreview.Visible = false;
+				_visibleButton.Icon = _notVisibleIcon;
+			}
+			else
+			{
+				_linkedMapPreview.Visible = true;
+				_visibleButton.Icon = _visibleIcon;
+			}
+		}
 	}
 
 	private void OnSliderValueChanged(double value)
