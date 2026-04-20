@@ -81,14 +81,5 @@ _questLogPanel = NodePath("../../AdjustablePanelContainer/QuestLog")
 [node name="PauseMenu" parent="." unique_id=2015271356 instance=ExtResource("6_lmgon")]
 
 [node name="MapPreview" parent="." unique_id=382069952 instance=ExtResource("8_sdud1")]
-offset_left = 15.0
-offset_top = 15.0
-offset_right = 15.0
-offset_bottom = 15.0
-_seed = 7432377
-_cellCount = 64
-_seaLevel = 0.45
-_coastThickness = 0.01
-_biomeLevel = 0.7
-_snowLevel = 0.9
-_baseFrequency = 0.004
+_seed = 343328
+_seaLevel = 0.4

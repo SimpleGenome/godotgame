@@ -55,6 +55,15 @@ public partial class TestMap
             NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
         };
 
+        var heightCurve = new MonotoneHermiteCurve(
+            minValue: -5000f,
+            maxValue: 8000f,
+            averageValue: 200f,
+            runawayThresholdLower: 0.30f,
+            runawayThresholdUpper: 0.72f,
+            centerSteepness: 1.6f
+        );
+
         float[,] heightMap = new float[mapSize, mapSize];
         Image heightImage = Image.CreateEmpty(mapSize, mapSize, false, Image.Format.Rgba8);
 
@@ -118,6 +127,10 @@ public partial class TestMap
                 heightMap[x, y] = height;
             }
         }
+
+        // Use curve to assign real world units
+        heightCurve.EvaluateInPlace(heightMap);
+        
 
         float minHeight = float.MaxValue;
         float maxHeight = float.MinValue;

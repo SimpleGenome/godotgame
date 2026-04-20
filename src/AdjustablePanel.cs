@@ -64,16 +64,16 @@ public partial class AdjustablePanel : Control
 		if (_titleLabel != null)
 			_titleLabel.Text = _windowTitle;
 
-        props = new()
-        {
-            Size = _defaultSize,
-            Pos = _defaultPos,
-            layer = 0,
-            id = _menuId,
-            displayName = _windowTitle
-        };
+		props = new()
+		{
+			Size = _defaultSize,
+			Pos = _defaultPos,
+			layer = 0,
+			id = _menuId,
+			displayName = _windowTitle
+		};
 
-        Size = props.Size;
+		Size = props.Size;
 		Position = props.Pos;
 		CustomMinimumSize = _minimumSize;
 

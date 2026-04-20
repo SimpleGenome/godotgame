@@ -269,8 +269,9 @@ public partial class MapPreview : Control
 
 		// y =24tan(2.27x - 1.3)+19
 		// y =5tan(2.95x - 1.51)+15
+		// y =20tan(2.55x-1.36)+16.59
 		float temperature = _temperatureMap[mapX, mapY];
-		float temperatureDegrees = 5 * (float)Math.Tan(2.95 * temperature - 1.51) + 15;
+		float temperatureDegrees = 20.0f * (float)Math.Tan(2.55f * temperature - 1.36f) + 16.59f;
 		float altitude = _heightMap[mapX, mapY];
 		float humidity = _humidityMap[mapX, mapY];
 		float gradientMag = _gradientMagMap[mapX, mapY];
@@ -283,7 +284,7 @@ public partial class MapPreview : Control
 			$"Cell ID: {cellId}\n\n" +
 			$"Cell Count: {_cellMap.Cells.Count}\n" +
 			$"Biome: {biomeType}\n\n" +
-			$"Temperature: {temperatureDegrees}\n" +
+			$"Temperature: {temperatureDegrees} / {temperature}\n" +
 			$"Altitude: {altitude}\n" +
 			$"Humidity: {humidity}\n" +
 			$"Gradient Magnitude: {gradientMag}\n" +
