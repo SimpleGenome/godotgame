@@ -81,5 +81,7 @@ _questLogPanel = NodePath("../../AdjustablePanelContainer/QuestLog")
 [node name="PauseMenu" parent="." unique_id=2015271356 instance=ExtResource("6_lmgon")]
 
 [node name="MapPreview" parent="." unique_id=382069952 instance=ExtResource("8_sdud1")]
-_seed = 343328
-_seaLevel = 0.4
+_seed = 343341
+_cellCount = 512
+_seaLevel = 0.3
+_biomeLevel = 0.7

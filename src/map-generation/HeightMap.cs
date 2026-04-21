@@ -3,7 +3,7 @@ using Godot;
 
 public partial class HeightMap
 {
-    public static (float[,], ImageTexture) GenerateHeightMap(
+        public static (float[,], ImageTexture) GenerateHeightMap(
         int mapSize,
         int seed,
         float baseFrequency,
@@ -55,6 +55,15 @@ public partial class HeightMap
             NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
         };
 
+        var heightCurve = new MonotoneHermiteCurve(
+            minValue: -8000f,
+            maxValue: 8000f,
+            averageValue: 200f,
+            runawayThresholdLower: 0.35f,
+            runawayThresholdUpper: 0.9f,
+            centerSteepness: 1.1f
+        );
+
         float[,] heightMap = new float[mapSize, mapSize];
         Image heightImage = Image.CreateEmpty(mapSize, mapSize, false, Image.Format.Rgba8);
 
@@ -74,7 +83,7 @@ public partial class HeightMap
                 float gradient = (px * orientation) + (py * (1f - orientation));
                 gradient = 1f - 1.2f * gradient * gradient + 0.5f * gradient * gradient * gradient;
 
-                float continent = (n1 * 0.72f) + (gradient * 0.28f);
+                float continent = (n1 * 0.7f) + (gradient * 0.3f);
 
                 // Softer shaping than height^3
                 continent = Mathf.Pow(Mathf.Clamp(continent, 0f, 1f), 1.55f);
@@ -119,31 +128,26 @@ public partial class HeightMap
             }
         }
 
-        float minHeight = float.MaxValue;
-        float maxHeight = float.MinValue;
+        (float minValue, float maxValue) = MapGenTools.FindMinMax(heightMap);
 
-        // Find min and max
-        for (int y = 0; y < mapSize; y++)
-        {
-            for (int x = 0; x < mapSize; x++)
-            {
-                float h = heightMap[x, y];
+        heightMap = MapGenTools.NormaliseMap(heightMap, minValue, maxValue);
 
-                if (h < minHeight) minHeight = h;
-                if (h > maxHeight) maxHeight = h;
-            }
-        }
+        // Use curve to assign real world units
+        heightCurve.EvaluateInPlace(heightMap);
+
+        //Find min / max values
+        (minValue, maxValue) = MapGenTools.FindMinMax(heightMap);
 
         // Normalize to full 0..1 range
-        float range = Mathf.Max(maxHeight - minHeight, 0.0001f);
+        heightMap = MapGenTools.NormaliseMap(heightMap, minValue, maxValue);
 
-        for (int y = 0; y < mapSize; y++)
-        {
-            for (int x = 0; x < mapSize; x++)
-            {
-                heightMap[x, y] = (heightMap[x, y] - minHeight) / range;
-            }
-        }
+        heightCurve.EvaluateInPlace(heightMap);
+
+        (minValue, maxValue) = MapGenTools.FindMinMax(heightMap);
+
+        // Normalize to full 0..1 range
+        heightMap = MapGenTools.NormaliseMap(heightMap, minValue, maxValue);
+
 
         for (int y = 0; y < mapSize; y++)
         {

@@ -106,16 +106,9 @@ public partial class MapPreview : Control
 		);
 		_heightMapPreview.Texture = _heightTexture;
 
-		(_testMap, _testTexture) = TestMap.GenerateHeightMap(
+		(_testMap, _testTexture) = TestMap.GenerateMountainOverlay(
 			_mapSize,
-			_seed,
-			_baseFrequency,
-			_detailFrequency,
-			temperatureOrientation,
-			_seaLevel,
-			_coastThickness,
-			_biomeLevel,
-			_snowLevel
+			_seed
 		);
 		_testMapPreview.Texture = _testTexture;
 
@@ -288,7 +281,9 @@ public partial class MapPreview : Control
 			$"Altitude: {altitude}\n" +
 			$"Humidity: {humidity}\n" +
 			$"Gradient Magnitude: {gradientMag}\n" +
-			$"Gradient Direction: dx:{gradientDir.dx} dy:{gradientDir.dy}\n";
+			$"Gradient Direction: dx:{gradientDir.dx} dy:{gradientDir.dy}\n" +
+			$"Test Value: {_testMap[mapX, mapY]}\n";
+
 
 		labelToUpdate.Text = result;
 	}

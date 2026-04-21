@@ -279,8 +279,8 @@ public partial class HumidityMap
 
                     // Higher barriers cast longer shadows. Lower hills cast shorter ones.
                     float localShadowRange = Mathf.Lerp(
-                        maxDim * 0.05f,
-                        maxDim * 0.18f,
+                        maxDim * 0.04f,
+                        maxDim * 0.08f,
                         upwindOrographicMask
                     );
 
