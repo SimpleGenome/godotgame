@@ -57,8 +57,9 @@ public partial class MapGenTools
         return (minValue, maxValue);
     }
 
-    public static Texture2D MapToGreyscaleTexture(float[,] map, int mapSize)
+    public static Texture2D MapToGreyscaleTexture(float[,] map)
     {
+        int mapSize = map.GetLength(0);
         Image mapImage = Image.CreateEmpty(mapSize, mapSize, false, Image.Format.Rgba8);
 
         for (int y = 0; y < mapSize; y++)
@@ -76,7 +77,7 @@ public partial class MapGenTools
         return mapTexture;
     }
 
-    private static Color PickTerrainColorGreyScale(float v)
+    public static Color PickTerrainColorGreyScale(float v)
     {
         return new Color(v, v, v);
     }
