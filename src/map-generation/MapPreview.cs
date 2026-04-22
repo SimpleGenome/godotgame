@@ -89,6 +89,14 @@ public partial class MapPreview : Control
 		float heightOrientation = MapGenTools.NextRandomFloat();
 		float temperatureOrientation = MapGenTools.NextRandomFloat();
 		_windDirection = new Vector2(MapGenTools.NextRandomFloat(), MapGenTools.NextRandomFloat());
+
+		// var gen = new DlaMountainGenerator();
+		// gen.FinalResolution = 1024;
+		// gen.Seed = _seed + 34202;
+		// gen.InitialSeedLayoutMode = DlaMountainGenerator.SeedLayout.CenterSingle;
+		// gen.ParticleSpawnMode = DlaMountainGenerator.WalkerSpawnMode.BoundsBox;
+		// ImageTexture dlaMountainTexture = gen.GenerateTexture();
+
 		GD.Print("Height Orientation: " + heightOrientation);
 		GD.Print("Temperature Orientation: " + temperatureOrientation);
 
@@ -106,8 +114,9 @@ public partial class MapPreview : Control
 		);
 		_heightMapPreview.Texture = _heightTexture;
 
-		(_testMap, _testTexture) = TestMap.GenerateMountainOverlay(
-			_mapSize,
+		var testMap = new TestMap();
+
+		(_testMap, _testTexture) = testMap.GenerateMountainOverlay(
 			_seed
 		);
 		_testMapPreview.Texture = _testTexture;
@@ -184,8 +193,8 @@ public partial class MapPreview : Control
 
 		AddReorderSliders(_mapDetailsForSliders);
 
-		if (_testMapPreview != null)
-			_testMapPreview.GuiInput += OnMapGuiInput;
+		if (_heightMapPreview != null)
+			_heightMapPreview.GuiInput += OnMapGuiInput;
 
 		if (_reorderSliderContainer != null)
 			_reorderSliderContainer.SliderReordered += OnSliderReordered;
@@ -201,7 +210,7 @@ public partial class MapPreview : Control
 			mb.ButtonIndex == MouseButton.Left &&
 			mb.Pressed)
 		{
-			_selectedTileLocation = _testMapPreview.GetLocalMousePosition();
+			_selectedTileLocation = _heightMapPreview.GetLocalMousePosition();
 			SetTileDetailsString(_selectedTileLocation, _selectedTileDetailsLabel);
 		}
 	}
@@ -229,30 +238,30 @@ public partial class MapPreview : Control
 
 	public override void _Process(double delta)
 	{
-		SetTileDetailsString(_testMapPreview.GetLocalMousePosition(), _currentTileDetailsLabel);
+		SetTileDetailsString(_heightMapPreview.GetLocalMousePosition(), _currentTileDetailsLabel);
 	}
 
 	private void SetTileDetailsString(Vector2 pos, Label labelToUpdate)
 	{
-		Rect2 bounds = new Rect2(Vector2.Zero, _testMapPreview.Size);
+		Rect2 bounds = new Rect2(Vector2.Zero, _heightMapPreview.Size);
 
 		if (!bounds.HasPoint(pos))
 		{
 			return;
 		}
 
-		if (_testMapPreview.Size.X <= 0 || _testMapPreview.Size.Y <= 0)
+		if (_heightMapPreview.Size.X <= 0 || _heightMapPreview.Size.Y <= 0)
 			return;
 
 		// Convert from TextureRect space to map array space
 		int mapX = Mathf.Clamp(
-			Mathf.FloorToInt(pos.X / _testMapPreview.Size.X * _biomeResult.CellMap.Width),
+			Mathf.FloorToInt(pos.X / _heightMapPreview.Size.X * _biomeResult.CellMap.Width),
 			0,
 			_biomeResult.CellMap.Width - 1
 		);
 
 		int mapY = Mathf.Clamp(
-			Mathf.FloorToInt(pos.Y / _testMapPreview.Size.Y * _biomeResult.CellMap.Height),
+			Mathf.FloorToInt(pos.Y / _heightMapPreview.Size.Y * _biomeResult.CellMap.Height),
 			0,
 			_biomeResult.CellMap.Height - 1
 		);
@@ -281,8 +290,8 @@ public partial class MapPreview : Control
 			$"Altitude: {altitude}\n" +
 			$"Humidity: {humidity}\n" +
 			$"Gradient Magnitude: {gradientMag}\n" +
-			$"Gradient Direction: dx:{gradientDir.dx} dy:{gradientDir.dy}\n" +
-			$"Test Value: {_testMap[mapX, mapY]}\n";
+			$"Gradient Direction: dx:{gradientDir.dx} dy:{gradientDir.dy}\n"; //+
+			//$"Test Value: {_testMap[mapX, mapY]}\n";
 
 
 		labelToUpdate.Text = result;
